@@ -1,0 +1,16 @@
+{
+  "name": "first-server",
+  "version": "1.0.0",
+  "description": "This is my first nodeJS server",
+  "main": "firstServer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon firstServer.js",
+    "start-server": "node firstServer.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
