@@ -1,0 +1,36 @@
+<!-- <html>
+  <body>
+    <form onsubmit="return formsubmit()">
+      <input id="username" type="text" name="username" />
+      <button type="submit">set</button>
+    </form>
+  </body>
+  <script>
+    function formsubmit() {
+        localStorage.setItem("username",document.getElementById("username").value);
+        return false;
+    }
+  </script>
+</html> -->
+<html>
+  <body>
+    <h1>Chat App</h1>
+    <h3>'+filedata+'</h3>
+    <form onsubmit="return formsubmit()">
+      <input
+        placeholder="message"
+        id="message"
+        type="text"
+        name="message"
+      /><button type="submit">send</button>
+    </form>
+  </body>
+  <script>
+    function formsubmit() {
+      const message = document.getElementById("message");
+      const messagevalue = message.value;
+      message.value = localStorage.getItem("username") + " : " + messagevalue;
+      return false;
+    }
+  </script>
+</html>
