@@ -1,7 +1,5 @@
-const http = require("http");
 const fs = require("fs");
-
-const server = http.createServer((req, res) => {
+const requestHandler = (req, res) => {
   //   console.log("Abhay in the server");
   let text = "Welcome to my Node Js project";
   //   console.log(req.url);
@@ -14,16 +12,16 @@ const server = http.createServer((req, res) => {
     const message = fs.readFileSync("message.txt");
     res.setHeader("Content-Type", "text/html");
     res.write(`
-  <html>
-  <body>
-  <h1>${text}</h1>
-  <h3>${message}</h3>
-  <form action="/message" method="POST">
-  <input type="text" name="message">
-  <button type="submit">Send</button>
-  </form>
-  </body>
-  </html>`);
+    <html>
+    <body>
+    <h1>${text}</h1>
+    <h3>${message}</h3>
+    <form action="/message" method="POST">
+    <input type="text" name="message">
+    <button type="submit">Send</button>
+    </form>
+    </body>
+    </html>`);
     return res.end();
   }
   if (url === "/message" && method === "POST") {
@@ -43,5 +41,19 @@ const server = http.createServer((req, res) => {
       });
     });
   }
-});
-server.listen(4000);
+};
+
+// First way to export
+// module.exports = {
+//   handler: requestHandler,
+//   someOtherExport: "I am other Export",
+// };
+
+// Second way to export
+// module.exports.handler = requestHandler;
+// module.exports.someOtherExport = "I am other Export";
+
+// third way to export
+exports.handler = requestHandler;
+exports.someOtherExport = "I am other Export";
+
