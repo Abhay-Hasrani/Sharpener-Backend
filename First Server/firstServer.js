@@ -1,18 +1,23 @@
-// const http = require("http");
+const path = require('path');
 
-const express = require("express");
-const bodyParser = require("body-parser");
-//custom imports
-// const routes = require('./routes');
-const admin = require('./routes/admin.js');
+const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
 
-//using middlewares
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use('/admin',admin);
+const adminRoutes = require('./routes/admin.js');
+const shopRoutes = require('./routes/shop.js');
+const contactUs = require('./routes/contactUs.js');
 
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// const server = http.createServer(routes.handler); //doesnt need this as app.listens does same bts
-// server.listen(4000);
+app.use('/admin', adminRoutes);
+app.use('/contact-us',contactUs);
+app.use(shopRoutes);
+
+app.use((req, res, next) => {
+    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+});
+
 app.listen(4000);
