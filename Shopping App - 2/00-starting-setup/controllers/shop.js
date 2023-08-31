@@ -1,4 +1,6 @@
+const { render } = require("pug");
 const Product = require("../models/product");
+const Cart = require("../models/cart");
 
 exports.getProducts = (req, res, next) => {
   Product.fetchAll((products) => {
@@ -12,9 +14,9 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const productID = req.params.productID;
-  console.log(productID);
+  // console.log(productID);
   Product.findById(productID, (product) => {
-    console.log(product);
+    // console.log(product);
     res.render("shop/product-detail", {
       product: product,
       pageTitle: product.title,
@@ -38,6 +40,15 @@ exports.getCart = (req, res, next) => {
     path: "/cart",
     pageTitle: "Your Cart",
   });
+};
+
+exports.postCart = (req, res, next) => {
+  const productID = req.body.productID;
+  // console.log(productID);
+  Product.findById(productID, (product) => {
+    Cart.addProductToCart(productID, product.price);
+  });
+  res.redirect('/cart');
 };
 
 exports.getOrders = (req, res, next) => {
