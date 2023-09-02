@@ -56,12 +56,14 @@ exports.postEditProduct = (req, res, next) => {
   const description = req.body.description;
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
-  Product.create({
-    title,
-    description,
-    price,
-    imageUrl,
-  })
+  Product.findByPk(id)
+    .then((product) => {
+      product.title = title;
+      product.deleteProduct = description;
+      product.imageUrl = imageUrl;
+      product.price = price;
+      return product.save();
+    })
     .then((result) => {
       console.log(result);
       res.redirect("/admin/products");
