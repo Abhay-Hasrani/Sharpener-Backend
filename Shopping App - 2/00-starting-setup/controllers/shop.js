@@ -108,7 +108,7 @@ exports.deleteCartItem = (req, res, next) => {
     })
     .then((products) => {
       const product = products[0];
-      return product.destroy();
+      return product.cartItems.destroy();
     })
     .then(() => res.redirect("/cart"))
     .catch((err) => console.log(err));
