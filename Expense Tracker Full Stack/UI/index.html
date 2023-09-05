@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="../styles/signUpForm.css" />
   </head>
   <body>
-    <div class="form-box">
-      <form class="form" id="myForm" method="POST" action="http://localhost:3000/auth/signUp">
+    <div class="form-box" id="signUpFormBox">
+      <form class="form" id="signUpForm" method="POST" action="http://localhost:3000/auth/signUp">
         <span class="title">Sign up</span>
         <span class="subtitle">Create a free account with your email.</span>
         <div class="form-container">
           <input
             type="text"
-            id="username"
+            id="signup_username"
             name="username"
             class="input"
             placeholder="Full Name"
@@ -24,7 +24,7 @@
           <input
             type="email"
             class="input"
-            id="email"
+            id="signup_email"
             name="email"
             placeholder="Email"
             value="abhayhasrani@gmail.com"
@@ -33,7 +33,7 @@
           <input
             type="password"
             class="input"
-            id="password"
+            id="signup_password"
             name="password"
             placeholder="Password"
             required
@@ -42,7 +42,37 @@
         <button type="submit">Sign up</button>
       </form>
       <div class="form-section">
-        <p>Have an account? <a href="">Log in</a></p>
+        <p>Have an account? <a id="btn_login" onclick="logInFormToggler()" href="#">Log in</a></p>
+      </div>
+    </div>
+
+    <div class="form-box" id="logInFormBox" style="display: none;">
+      <form class="form" id="logInForm" method="POST" action="http://localhost:3000/auth/logIn">
+        <span class="title">Log In</span>
+        <span class="subtitle">Log In with your email and password</span>
+        <div class="form-container">
+          <input
+            type="email"
+            class="input"
+            id="login_email"
+            name="email"
+            placeholder="Email"
+            value="abhayhasrani@gmail.com"
+            required
+          />
+          <input
+            type="password"
+            class="input"
+            id="login_password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+        </div>
+        <button type="submit">Log In</button>
+      </form>
+      <div class="form-section">
+        <p>New User? <a id="btn_signUp" onclick="logInFormToggler()" href="#">Create an account!</a></p>
       </div>
     </div>
   </body>
