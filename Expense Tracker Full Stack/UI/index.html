@@ -1,26 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Expense Tracker</title>
-    <link rel="stylesheet" href="../styles/signUpForm.css">
-</head>
-<body>
-   <div class="form-box">
-      <form class="form">
-          <span class="title">Sign up</span>
-          <span class="subtitle">Create a free account with your email.</span>
-          <div class="form-container">
-            <input type="text" id="username" name="username" class="input" placeholder="Full Name" required>
-               <input type="email" class="input" id="email" name="email" placeholder="Email" required>
-               <input type="password" class="input" id="password" name="password" placeholder="Password" required>
-          </div>
-          <button>Sign up</button>
+    <link rel="stylesheet" href="../styles/signUpForm.css" />
+  </head>
+  <body>
+    <div class="form-box">
+      <form class="form" id="myForm" method="POST" action="http://localhost:3000/auth/signUp">
+        <span class="title">Sign up</span>
+        <span class="subtitle">Create a free account with your email.</span>
+        <div class="form-container">
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="input"
+            placeholder="Full Name"
+            value="Abhay Hasrani"
+            required
+          />
+          <input
+            type="email"
+            class="input"
+            id="email"
+            name="email"
+            placeholder="Email"
+            value="abhayhasrani@gmail.com"
+            required
+          />
+          <input
+            type="password"
+            class="input"
+            id="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+        </div>
+        <button type="submit">Sign up</button>
       </form>
       <div class="form-section">
-        <p>Have an account? <a href="">Log in</a> </p>
+        <p>Have an account? <a href="">Log in</a></p>
       </div>
-      </div>
-</body>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="index.js"></script>
 </html>
