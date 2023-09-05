@@ -25,12 +25,14 @@ exports.editProductQuantity = async (req, res, next) => {
   const productID = req.params.productID;
   const itemsBought = req.query.itemsBought;
   //below function decrement will decrement the quantity property of product
-  const update = await Product.decrement(
-    { quantity: itemsBought },
-    { where: { id: productID } }
-  );
-
-  const updatedProduct = await Product.findByPk(productID);
+  let product = await Product.findByPk(productID);
+  if (product.quantity >= itemsBought) {
+    const update = await Product.decrement(
+      { quantity: itemsBought },
+      { where: { id: productID } }
+    );
+  }
+  updatedProduct = await product.reload();
   console.log("updatedProductQuantity : " + updatedProduct.quantity);
   console.log(updatedProduct);
   res.json(updatedProduct);
