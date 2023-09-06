@@ -10,7 +10,7 @@ const baseUrl = "http://localhost:3000/";
 const signUpUrl = "http://localhost:3000/auth/signUp";
 const logInUrl = "http://localhost:3000/auth/logIn";
 
-let isLogInVisible = false;
+let isLogInVisible = true;
 
 function logInFormToggler(e) {
   isLogInVisible = !isLogInVisible;
@@ -38,7 +38,9 @@ logInForm.addEventListener("submit", async (e) => {
   for (const [name, value] of formData.entries()) userData[name] = value;
   try {
     const res = await axios.post(logInUrl, userData);
-    alert(res.statusText);
+    console.log(res.statusText);
+    // window.history.pushState({},"","./expenses.html");
+    window.location.href = "./expenses.html";
   } catch (err) {
     alert(err.response.statusText);
   }

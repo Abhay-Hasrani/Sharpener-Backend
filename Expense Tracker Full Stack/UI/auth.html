@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Expense Tracker</title>
-    <link rel="stylesheet" href="../styles/signUpForm.css" />
+    <title>Expense LogIn</title>
+    <link rel="stylesheet" href="../styles/auth.css" />
   </head>
   <body>
-    <div class="form-box" id="signUpFormBox">
+    <div class="form-box" id="signUpFormBox" style="display: none;">
       <form class="form" id="signUpForm" method="POST" action="http://localhost:3000/auth/signUp">
         <span class="title">Sign up</span>
         <span class="subtitle">Create a free account with your email.</span>
@@ -46,7 +46,7 @@
       </div>
     </div>
 
-    <div class="form-box" id="logInFormBox" style="display: none;">
+    <div class="form-box" id="logInFormBox">
       <form class="form" id="logInForm" method="POST" action="http://localhost:3000/auth/logIn">
         <span class="title">Log In</span>
         <span class="subtitle">Log In with your email and password</span>
@@ -77,5 +77,5 @@
     </div>
   </body>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="index.js"></script>
+  <script src="auth.js"></script>
 </html>
