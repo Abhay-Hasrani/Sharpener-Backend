@@ -2,10 +2,11 @@ const Expense = require("../models/expense");
 
 exports.getAllExpenses = async (req, res, next) => {
   try {
-    const expenses = await Expense.findAll();
+    const expenses = await req.user.getExpenses();
     res.statusMessage = "Expense Retrieved Successfully";
     res.status(200).json(expenses);
   } catch (err) {
+    console.log(err);
     res.statusMessage = "Error while Retrieving expense";
     res.status(400).json({ message: err.message });
   }
@@ -17,7 +18,11 @@ exports.postAddExpense = async (req, res, next) => {
   const description = expenseObj.description;
   const category = expenseObj.category;
   try {
-    const newExpense = await Expense.create({ amount, description, category });
+    const newExpense = await req.user.createExpense({
+      amount,
+      description,
+      category,
+    });
     res.statusMessage = "Expense Added Successfully";
     console.log(newExpense);
     res.status(201).json(newExpense);
@@ -30,11 +35,7 @@ exports.postAddExpense = async (req, res, next) => {
 exports.deleteExpense = async (req, res, next) => {
   const expenseID = req.params.expenseID;
   try {
-    const deletedExpense = await Expense.destroy({
-      where: {
-        id: expenseID,
-      },
-    });
+    const deletedExpense = await req.user.removeExpense(expenseID);
     // deletedExpense is either 0 or 1
     if (!deletedExpense)
       throw new Error("Expense is not present or already deleted");

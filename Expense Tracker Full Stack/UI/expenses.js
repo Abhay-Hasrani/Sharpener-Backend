@@ -6,6 +6,9 @@ const baseUrl = "http://localhost:3000/expense/";
 const addExpenseUrl = baseUrl + "add-expense";
 const deleteExpenseUrl = baseUrl + "delete-expense/";
 
+const AuthenticationToken = localStorage.getItem("token");
+axios.defaults.headers.common['AuthenticationToken'] = AuthenticationToken;
+
 document.addEventListener("DOMContentLoaded", async (e) => {
   try {
     while(expenseList.hasChildNodes()) expenseList.removeChild(expenseList.firstChild);

@@ -1,5 +1,10 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+function generateAccessToken(id) {
+  return jwt.sign({ userID: id }, process.env.SECRET_AUTH_KEY);
+}
 
 exports.createUser = async (req, res, next) => {
   const userdata = req.body;
@@ -48,7 +53,7 @@ exports.postUserLogin = async (req, res, next) => {
         res.status(400).json(new Error());
       } else {
         res.statusMessage = "User Logged In successfully";
-        res.json(user);
+        res.status(200).json({ token: generateAccessToken(user.id) });
       }
     });
   } catch (err) {

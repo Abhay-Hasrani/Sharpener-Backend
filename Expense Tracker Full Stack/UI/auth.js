@@ -25,6 +25,7 @@ signUpForm.addEventListener("submit", async (e) => {
   for (const [name, value] of formData.entries()) userData[name] = value;
   try {
     const res = await axios.post(signUpUrl, userData);
+    logInFormToggler();
     console.log(res);
   } catch (err) {
     alert(err.response.statusText);
@@ -38,6 +39,7 @@ logInForm.addEventListener("submit", async (e) => {
   for (const [name, value] of formData.entries()) userData[name] = value;
   try {
     const res = await axios.post(logInUrl, userData);
+    localStorage.setItem("token", res.data.token);
     console.log(res.statusText);
     // window.history.pushState({},"","./expenses.html");
     window.location.href = "./expenses.html";
