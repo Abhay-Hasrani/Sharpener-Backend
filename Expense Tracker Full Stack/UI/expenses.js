@@ -1,18 +1,30 @@
 const expenseForm = document.getElementById("expense-form");
 const expenseListItem = document.getElementById("expense-list-item");
 const expenseList = document.getElementById("expense-list");
+const premiumBtn = document.getElementById("premium-btn");
 
-const baseUrl = "http://localhost:3000/expense/";
-const addExpenseUrl = baseUrl + "add-expense";
-const deleteExpenseUrl = baseUrl + "delete-expense/";
+const baseUrl = "http://localhost:3000";
+
+const expenseBaseUrl = baseUrl + "/expense";
+const addExpenseUrl = expenseBaseUrl + "/add-expense";
+const deleteExpenseUrl = expenseBaseUrl + "/delete-expense/";
+
+const purchaseBaseUrl = baseUrl + "/purchase";
+const purchasePremiumUrl = purchaseBaseUrl + "/premium";
+const updateTransactionStatusUrl = purchaseBaseUrl + "/updateTransactionStatus";
 
 const AuthenticationToken = localStorage.getItem("token");
-axios.defaults.headers.common['AuthenticationToken'] = AuthenticationToken;
+axios.defaults.headers.common["AuthenticationToken"] = AuthenticationToken;
 
 document.addEventListener("DOMContentLoaded", async (e) => {
   try {
-    while(expenseList.hasChildNodes()) expenseList.removeChild(expenseList.firstChild);
-    const result = await axios.get(baseUrl);
+    while (expenseList.hasChildNodes())
+      expenseList.removeChild(expenseList.firstChild);
+    const isPremium = new URLSearchParams(window.location.search).get(
+      "isPremium"
+    );
+    if (isPremium==="true") premiumBtn.style.display = "none";
+    const result = await axios.get(expenseBaseUrl);
     const expenses = result.data;
     for (const expense of expenses) addListItemToUI(expense);
   } catch (error) {
@@ -39,7 +51,7 @@ function addListItemToUI(expenseObj) {
   categoryElement.textContent = expenseObj.category;
   descriptionElement.textContent = expenseObj.description;
 
-  console.log(newListItem);
+  // console.log(newListItem);
   newListItem.style.display = "flex";
 
   deleteButton.addEventListener("click", async (e) => {
@@ -67,5 +79,32 @@ expenseForm.addEventListener("submit", async (e) => {
     addListItemToUI(addedExpenseObj.data);
   } catch (error) {
     alert(error.response.statusText);
+  }
+});
+
+premiumBtn.addEventListener("click", async (e) => {
+  try {
+    const response = await axios.get(purchasePremiumUrl);
+    const options = {
+      key: response.data.key_id,
+      order_id: response.data.order.id,
+      handler: async function (response) {
+        if (!response.razorpay_payment_id) {
+          throw new Error("Couldn't Complete Premium Transaction");
+        }
+        const result = await axios.post(updateTransactionStatusUrl, {
+          orderID: options.order_id,
+          paymentID: response.razorpay_payment_id,
+        });
+        // console.log(result);
+        alert("Premium activated");
+        e.target.remove();
+      },
+    };
+    const rzp = new Razorpay(options);
+    rzp.open();
+    e.preventDefault();
+  } catch (error) {
+    console.log(error.message);
   }
 });

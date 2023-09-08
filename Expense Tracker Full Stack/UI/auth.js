@@ -37,13 +37,20 @@ logInForm.addEventListener("submit", async (e) => {
   const formData = new FormData(logInForm);
   const userData = {};
   for (const [name, value] of formData.entries()) userData[name] = value;
+  console.log(window.location);
   try {
     const res = await axios.post(logInUrl, userData);
     localStorage.setItem("token", res.data.token);
     console.log(res.statusText);
     // window.history.pushState({},"","./expenses.html");
-    window.location.href = "./expenses.html";
+    customRedirect(res.data.isPremium);
   } catch (err) {
+    console.log(err);
     alert(err.response.statusText);
   }
 });
+
+function customRedirect(isPremium) {
+  const encodedString = encodeURIComponent(isPremium);
+  window.location.href = "./expenses.html?isPremium=" + isPremium;
+}

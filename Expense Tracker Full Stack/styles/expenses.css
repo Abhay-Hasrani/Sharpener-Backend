@@ -253,10 +253,10 @@ option:hover {
 }
 
 /* below  is to hide the overflow y scrollbar*/
- .description::-webkit-scrollbar {
+.description::-webkit-scrollbar {
   width: 0; /* Set the width of the scrollbar */
 }
- 
+
 .expense-list-item-buttons {
   display: flex;
   justify-content: center;
@@ -394,4 +394,61 @@ option:hover {
   opacity: 1;
   transform: translateY(0px);
   transition-duration: 0.3s;
+}
+
+/*below is for premium button*/
+
+.premium-btn {
+  width: 140px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(
+    to right,
+    #77530a,
+    #ffd277,
+    #77530a,
+    #77530a,
+    #ffd277,
+    #77530a
+  );
+  background-size: 250%;
+  background-position: left;
+  color: #ffd277;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition-duration: 1s;
+  overflow: hidden;
+}
+
+.premium-btn::before {
+  position: absolute;
+  content: "PREMIUM";
+  color: #ffd277;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 97%;
+  height: 90%;
+  border-radius: 8px;
+  transition-duration: 1s;
+  background-color: rgba(0, 0, 0, 0.842);
+  background-size: 200%;
+}
+
+.premium-btn:hover {
+  background-position: right;
+  transition-duration: 1s;
+}
+
+.premium-btn:hover::before {
+  background-position: right;
+  transition-duration: 1s;
+}
+
+.premium-btn:active {
+  transform: scale(0.95);
 }

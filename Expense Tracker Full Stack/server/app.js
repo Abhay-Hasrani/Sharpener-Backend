@@ -7,8 +7,10 @@ const database = require("./db/database");
 
 const authRoutes = require("./routes/auth");
 const expenseRoutes = require("./routes/expense");
+const purchaseRoutes = require("./routes/purchase");
 const User = require("./models/user");
 const Expense = require("./models/expense");
+const Order = require("./models/order");
 
 const app = express();
 
@@ -18,9 +20,13 @@ app.use(bodyParser.json({ extended: false }));
 
 app.use("/auth", authRoutes);
 app.use("/expense", expenseRoutes);
-
+app.use("/purchase", purchaseRoutes);
+ 
 User.hasMany(Expense);
 Expense.belongsTo(User);
+
+User.hasMany(Order);
+Order.belongsTo(User);
 
 database
   .sync()

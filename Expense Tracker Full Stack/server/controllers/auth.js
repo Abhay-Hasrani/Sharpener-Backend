@@ -53,7 +53,12 @@ exports.postUserLogin = async (req, res, next) => {
         res.status(400).json(new Error());
       } else {
         res.statusMessage = "User Logged In successfully";
-        res.status(200).json({ token: generateAccessToken(user.id) });
+        res
+          .status(200)
+          .json({
+            isPremium: user.isPremium,
+            token: generateAccessToken(user.id),
+          });
       }
     });
   } catch (err) {
