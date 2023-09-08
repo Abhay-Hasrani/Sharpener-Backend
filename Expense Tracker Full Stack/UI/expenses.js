@@ -1,7 +1,11 @@
 const expenseForm = document.getElementById("expense-form");
 const expenseListItem = document.getElementById("expense-list-item");
 const expenseList = document.getElementById("expense-list");
+const leaderBoardListItem = document.getElementById("leaderboard-list-item");
+const leaderBoardList = document.getElementById("leaderboard-list");
 const premiumBtn = document.getElementById("premium-btn");
+const leaderboardBtn = document.getElementById("leaderboard-btn");
+const listTitle = document.getElementById("list-title");
 
 const baseUrl = "http://localhost:3000";
 
@@ -13,26 +17,73 @@ const purchaseBaseUrl = baseUrl + "/purchase";
 const purchasePremiumUrl = purchaseBaseUrl + "/premium";
 const updateTransactionStatusUrl = purchaseBaseUrl + "/updateTransactionStatus";
 
+const premiumBaseUrl = baseUrl + "/premium";
+const leaderboardUrl = premiumBaseUrl + "/leaderboard";
+
 const AuthenticationToken = localStorage.getItem("token");
 axios.defaults.headers.common["AuthenticationToken"] = AuthenticationToken;
 
+function parseJwt(token) {
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
+}
+
+function activatePremium() {
+  const isPremium = parseJwt(AuthenticationToken).isPremium;
+  // console.log(isPremium);
+  if (isPremium) {
+    leaderboardBtn.style.display = "block";
+    const newElement = document.createElement("div");
+    newElement.textContent = "Premium User : ";
+    newElement.style =
+      "color: white; font-size:20px; text-decoration:underline";
+    premiumBtn.replaceWith(newElement);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async (e) => {
   try {
+    activatePremium();
     while (expenseList.hasChildNodes())
       expenseList.removeChild(expenseList.firstChild);
-    const isPremium = new URLSearchParams(window.location.search).get(
-      "isPremium"
-    );
-    if (isPremium==="true") premiumBtn.style.display = "none";
     const result = await axios.get(expenseBaseUrl);
     const expenses = result.data;
-    for (const expense of expenses) addListItemToUI(expense);
+    for (const expense of expenses) addExpenseListItemToUI(expense);
+
+    //doing above thing for leaderboard list
+    while (leaderBoardList.hasChildNodes())
+      leaderBoardList.removeChild(leaderBoardList.firstChild);
+    const result2 = await axios.get(leaderboardUrl);
+    const leaderBoardObjList = result2.data;
+    console.log(result2);
+    for (const leaderBoardObj of leaderBoardObjList)
+      addLeaderBoardListItemToUI(leaderBoardObj);
   } catch (error) {
+    console.log(error);
     alert(error.response.statusText);
   }
 });
 
-function addListItemToUI(expenseObj) {
+function addLeaderBoardListItemToUI(leaderBoardObj) {
+  const { username, totalSum: totalAmount } = leaderBoardObj;
+  const newListItem = leaderBoardListItem.cloneNode(true);
+  newListItem.removeAttribute("id");
+
+  newListItem.textContent = `Name : ${username} Total Expenses : ${totalAmount}`;
+  leaderBoardList.append(newListItem);
+}
+
+function addExpenseListItemToUI(expenseObj) {
   // console.log(expenseObj);
   const newListItem = expenseListItem.cloneNode(true);
   newListItem.removeAttribute("id");
@@ -76,7 +127,7 @@ expenseForm.addEventListener("submit", async (e) => {
     console.log(expenseObj);
     const addedExpenseObj = await axios.post(addExpenseUrl, { ...expenseObj });
     // window.location.href = "./auth.html";
-    addListItemToUI(addedExpenseObj.data);
+    addExpenseListItemToUI(addedExpenseObj.data);
   } catch (error) {
     alert(error.response.statusText);
   }
@@ -97,8 +148,10 @@ premiumBtn.addEventListener("click", async (e) => {
           paymentID: response.razorpay_payment_id,
         });
         // console.log(result);
+        localStorage.setItem("token", result.data.token);
+        activatePremium();
         alert("Premium activated");
-        e.target.remove();
+        // e.target.remove();
       },
     };
     const rzp = new Razorpay(options);
@@ -106,5 +159,17 @@ premiumBtn.addEventListener("click", async (e) => {
     e.preventDefault();
   } catch (error) {
     console.log(error.message);
+  }
+});
+
+leaderboardBtn.addEventListener("click", (e) => {
+  if (expenseList.style.display === "none") {
+    expenseList.style.display = "block";
+    leaderBoardList.style.display = "none";
+    listTitle.textContent = "Expenses List :";
+  } else {
+    expenseList.style.display = "none";
+    leaderBoardList.style.display = "block";
+    listTitle.textContent = "Leaderboard :";
   }
 });

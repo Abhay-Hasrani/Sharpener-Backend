@@ -8,6 +8,8 @@ const database = require("./db/database");
 const authRoutes = require("./routes/auth");
 const expenseRoutes = require("./routes/expense");
 const purchaseRoutes = require("./routes/purchase");
+const premiumRoutes = require("./routes/premium");
+
 const User = require("./models/user");
 const Expense = require("./models/expense");
 const Order = require("./models/order");
@@ -21,6 +23,7 @@ app.use(bodyParser.json({ extended: false }));
 app.use("/auth", authRoutes);
 app.use("/expense", expenseRoutes);
 app.use("/purchase", purchaseRoutes);
+app.use("/premium", premiumRoutes);
  
 User.hasMany(Expense);
 Expense.belongsTo(User);

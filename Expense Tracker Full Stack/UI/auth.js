@@ -43,7 +43,7 @@ logInForm.addEventListener("submit", async (e) => {
     localStorage.setItem("token", res.data.token);
     console.log(res.statusText);
     // window.history.pushState({},"","./expenses.html");
-    customRedirect(res.data.isPremium);
+    customRedirect();
   } catch (err) {
     console.log(err);
     alert(err.response.statusText);
@@ -51,6 +51,6 @@ logInForm.addEventListener("submit", async (e) => {
 });
 
 function customRedirect(isPremium) {
-  const encodedString = encodeURIComponent(isPremium);
-  window.location.href = "./expenses.html?isPremium=" + isPremium;
+  // const encodedString = encodeURIComponent(isPremium);
+  window.location.href = "./expenses.html";
 }

@@ -1,6 +1,7 @@
 const Razorpay = require("razorpay");
 
 const Order = require("../models/order");
+const { generateAccessToken } = require("./auth");
 
 exports.purchasePremium = (req, res, next) => {
   try {
@@ -36,7 +37,13 @@ exports.updateTransactionStatus = async (req, res, next) => {
       status: "SUCCESSFUL",
     });
     const updatedUser = await req.user.update({ isPremium: true });
-    res.status(202).json({ sucess: true, message: "Transaction Successful" });
+    res
+      .status(202)
+      .json({
+        sucess: true,
+        message: "Transaction Successful",
+        token: generateAccessToken(req.user.id, true),
+      });
   } catch (error) {
     console.log(error);
     res.status(402).json(error);

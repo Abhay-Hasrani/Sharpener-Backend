@@ -5,13 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Expense Manager</title>
     <link rel="stylesheet" href="../styles/expenses.css" />
+    <link rel="stylesheet" href="../styles/premium.css" />
   </head>
 
   <body>
-    <div class="form-box">
+    <div class="premium-box">
       <button class="premium-btn" id="premium-btn"></button>
+      <button class="leaderboard-btn" id="leaderboard-btn">Leaderboard</button>
+    </div>
+
+    
+    <div class="form-box">
       <form id="expense-form" class="form">
-        <div class="title">Add Your Expenes...</div>
+        <div class="title">Add Your Expesnes...</div>
 
         <div class="form__group field">
           <input
@@ -52,7 +58,7 @@
 
     <div class="horizontal-line"></div>
 
-    <div class="list-title">Expenses List :</div>
+    <div id="list-title" class="list-title">Expenses List :</div>
     <ul class="expense-list" id="expense-list">
       <li class="expense-list-item" id="expense-list-item">
         <div class="amount">100₹‎</div>
@@ -78,6 +84,11 @@
         </div>
       </li>
     </ul>
+    <ol style="display: none;" class="leaderboard-list" id="leaderboard-list">
+      <li class="leaderboard-list-item" id="leaderboard-list-item">
+        
+      </li>
+    </ol>
   </body>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
