@@ -17,14 +17,18 @@ exports.postAddExpense = async (req, res, next) => {
   const amount = expenseObj.amount;
   const description = expenseObj.description;
   const category = expenseObj.category;
+
   try {
     const newExpense = await req.user.createExpense({
       amount,
       description,
       category,
     });
+    const updateTotalExpense = await req.user.update({
+      totalExpense: req.user.totalExpense+ +amount,
+    });
     res.statusMessage = "Expense Added Successfully";
-    console.log(newExpense);
+    // console.log(newExpense);
     res.status(201).json(newExpense);
   } catch (err) {
     res.statusMessage = "Error while adding expense";
@@ -35,8 +39,12 @@ exports.postAddExpense = async (req, res, next) => {
 exports.deleteExpense = async (req, res, next) => {
   const expenseID = req.params.expenseID;
   try {
+    const requireExpense = await Expense.findByPk(expenseID);
     const deletedExpense = await req.user.removeExpense(expenseID);
     // deletedExpense is either 0 or 1
+    const updateTotalExpense = await req.user.update({
+      totalExpense: req.user.totalExpense- +requireExpense.amount,
+    });
     if (!deletedExpense)
       throw new Error("Expense is not present or already deleted");
     res.statusMessage = "Expense Deleted Successfully";

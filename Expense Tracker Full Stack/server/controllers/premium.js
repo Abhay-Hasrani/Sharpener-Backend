@@ -4,19 +4,25 @@ const Expense = require("../models/expense");
 
 exports.getLeaderBoard = async (req, res, next) => {
   try {
+    // const result = await User.findAll({
+    //   attributes: ["id","username",[Sequelize.fn("SUM", Sequelize.col("amount")), "totalSum"]],
+    //   include: [
+    //     {
+    //       model: Expense,
+    //       attributes: [
+
+    //       ],
+    //     },
+    //   ],
+    //   group: ["username"],
+    //   order: Sequelize.literal('totalSum DESC'),
+    // });
+    // used above default left outer join first but then included the total amount colum to users table
+
     const result = await User.findAll({
-      attributes: ["username",[Sequelize.fn("SUM", Sequelize.col("amount")), "totalSum"]],
-      include: [
-        {
-          model: Expense,
-          attributes: [
-            
-          ],
-        },
-      ],
-      group: ["username"],
-      order: Sequelize.literal('totalSum DESC'),
+      attributes: ["id", "username", "totalExpense"],
     });
+    // console.log(result);
     res.status(200).json(result);
   } catch (err) {
     console.log(err);

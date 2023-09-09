@@ -54,6 +54,7 @@ function activatePremium() {
 document.addEventListener("DOMContentLoaded", async (e) => {
   try {
     activatePremium();
+
     while (expenseList.hasChildNodes())
       expenseList.removeChild(expenseList.firstChild);
     const result = await axios.get(expenseBaseUrl);
@@ -75,11 +76,11 @@ document.addEventListener("DOMContentLoaded", async (e) => {
 });
 
 function addLeaderBoardListItemToUI(leaderBoardObj) {
-  const { username, totalSum: totalAmount } = leaderBoardObj;
+  const { username, totalExpense } = leaderBoardObj;
   const newListItem = leaderBoardListItem.cloneNode(true);
   newListItem.removeAttribute("id");
 
-  newListItem.textContent = `Name : ${username} Total Expenses : ${totalAmount}`;
+  newListItem.textContent = `Name : ${username} Total Expenses : ${totalExpense}`;
   leaderBoardList.append(newListItem);
 }
 
@@ -150,7 +151,7 @@ premiumBtn.addEventListener("click", async (e) => {
         // console.log(result);
         localStorage.setItem("token", result.data.token);
         activatePremium();
-        alert("Premium activated");
+        console.log("Premium activated");
         // e.target.remove();
       },
     };
