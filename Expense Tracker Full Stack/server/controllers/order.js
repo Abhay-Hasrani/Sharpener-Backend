@@ -2,6 +2,7 @@ const Razorpay = require("razorpay");
 
 const Order = require("../models/order");
 const { generateAccessToken } = require("./auth");
+const { Sequelize } = require("sequelize");
 
 exports.purchasePremium = (req, res, next) => {
   try {
@@ -29,22 +30,29 @@ exports.purchasePremium = (req, res, next) => {
 };
 
 exports.updateTransactionStatus = async (req, res, next) => {
+  const transaction = await Sequelize.transaction();
   const { orderID, paymentID } = req.body;
   try {
-    const order = await Order.findOne({ where: { orderID } });
-    const updatedOrder = await order.update({
-      paymentID,
-      status: "SUCCESSFUL",
+    const order = await Order.findOne({ where: { orderID }, transaction });
+    const updatedOrder = await order.update(
+      {
+        paymentID,
+        status: "SUCCESSFUL",
+      },
+      { transaction }
+    );
+    const updatedUser = await req.user.update(
+      { isPremium: true },
+      { transaction }
+    );
+    res.status(202).json({
+      sucess: true,
+      message: "Transaction Successful",
+      token: generateAccessToken(req.user.id, true),
     });
-    const updatedUser = await req.user.update({ isPremium: true });
-    res
-      .status(202)
-      .json({
-        sucess: true,
-        message: "Transaction Successful",
-        token: generateAccessToken(req.user.id, true),
-      });
+    await transaction.commit();
   } catch (error) {
+    await transaction.rollback();
     console.log(error);
     res.status(402).json(error);
   }
