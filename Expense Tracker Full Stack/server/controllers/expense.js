@@ -1,5 +1,5 @@
-const { Sequelize } = require("sequelize");
 const Expense = require("../models/expense");
+const database = require("../db/database");
 
 exports.getAllExpenses = async (req, res, next) => {
   try {
@@ -14,7 +14,7 @@ exports.getAllExpenses = async (req, res, next) => {
 };
 
 exports.postAddExpense = async (req, res, next) => {
-  const transaction = await Sequelize.transaction();
+  const transaction = await database.transaction();
   const expenseObj = req.body;
   const amount = expenseObj.amount;
   const description = expenseObj.description;
@@ -49,8 +49,10 @@ exports.postAddExpense = async (req, res, next) => {
 exports.deleteExpense = async (req, res, next) => {
   const expenseID = req.params.expenseID;
   try {
-    const requireExpense = await Expense.findByPk(expenseID);
-    const deletedExpense = await req.user.removeExpense(expenseID);
+    const requireExpense = await Expense.findByPk(expenseID, { transaction });
+    const deletedExpense = await req.user.removeExpense(expenseID, {
+      transaction,
+    });
     // deletedExpense is either 0 or 1
     const updateTotalExpense = await req.user.update(
       {

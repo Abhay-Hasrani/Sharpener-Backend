@@ -86,6 +86,6 @@ forgotPasswordForm.addEventListener("submit", async (e) => {
     showForm("log_in");
     console.log(res);
   } catch (err) {
-    alert(err.response.statusText);
+    console.log(err);
   }
 });

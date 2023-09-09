@@ -2,7 +2,7 @@ const Razorpay = require("razorpay");
 
 const Order = require("../models/order");
 const { generateAccessToken } = require("./auth");
-const { Sequelize } = require("sequelize");
+const database = require("../db/database");
 
 exports.purchasePremium = (req, res, next) => {
   try {
@@ -30,7 +30,7 @@ exports.purchasePremium = (req, res, next) => {
 };
 
 exports.updateTransactionStatus = async (req, res, next) => {
-  const transaction = await Sequelize.transaction();
+  const transaction = await database.transaction();
   const { orderID, paymentID } = req.body;
   try {
     const order = await Order.findOne({ where: { orderID }, transaction });

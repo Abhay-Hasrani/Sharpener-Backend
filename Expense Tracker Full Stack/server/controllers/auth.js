@@ -1,9 +1,13 @@
+const path = require("path");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { v4: uuidv4 } = require("uuid");
+const ForgotPassword = require("../models/forgotPassword");
 
 /*imports for sib-api-v3-sdk api BREVO(previously SendInBlue)*/
 const SIB = require("sib-api-v3-sdk");
+const database = require("../db/database");
 const defaultClient = SIB.ApiClient.instance;
 const apiKey = defaultClient.authentications["api-key"];
 apiKey.apiKey = process.env.EMAIL_API_KEY;
@@ -73,8 +77,23 @@ exports.postUserLogin = async (req, res, next) => {
 };
 
 exports.forgotPassword = async (req, res, next) => {
+  const transaction = await database.transaction();
   try {
     const toEmail = req.body.email;
+    const user = await User.findOne({
+      where: {
+        email: toEmail,
+      },
+      transaction,
+    });
+
+    const forgotPasswordRequest = await user.createForgotPasswordRequest(
+      {
+        id: uuidv4(),
+        isActive: true,
+      },
+      { transaction }
+    );
     const sender = {
       email: "abhayhasrani@gmail.com",
       name: "Abhay",
@@ -90,19 +109,78 @@ exports.forgotPassword = async (req, res, next) => {
       sender,
       to: receivers,
       subject: "Please click the below link to reset your password. Thank You!",
-      textContent: `This is text content and i am {{params.anyVariable}}`,
-      // htmlContent:`<h1>i am a h1 heading</h1>`, //html content overrides text content
-      params: {
-        anyVariable: "anyVariable",
-      },
+      htmlContent: `<h3>Click Below Link To reset your password</h3>
+      <a href="http://localhost:3000/password/resetPassword/${forgotPasswordRequest.id}">Reset</a>`, //html content overrides text content
+      // textContent: `This is text content and i am {{params.anyVariable}}`,
+      // params: {
+      //   anyVariable: "anyVariable",
+      // },
     });
-    console.log(result);
+    // console.log(result);
     res.json({
       emailDetails: result,
       message: "Please Check your registered Email for the Link",
     });
-  } catch (error) {
+
+    await transaction.commit();
+  } catch (err) {
+    await transaction.rollback();
     console.log(err);
     res.status(402).json({ message: "Couldn't generate forgot password link" });
+  }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const forgotPasswordRequestID = req.params.forgotPasswordRequestID;
+    const isRequestValid = await ForgotPassword.findByPk(
+      forgotPasswordRequestID
+    );
+    // console.log(" validatitiy: ", isRequestValid);
+    if (isRequestValid && isRequestValid.isActive) {
+      //below linedoesnt work due to security reasons so need to use sendFile
+      // res.redirect("file:///c%3A/Users/91983/SharpenerBackEnd/Expense%20Tracker%20Full%20Stack/UI/passwordReset.html");
+      res.sendFile(
+        path.join(__dirname, "..", "..", "UI", "passwordReset.html"),
+        path.join(__dirname, "..", "..", "styles", "auth.css")
+      );
+    } else throw new Error("Request Link has Expired");
+  } catch (err) {
+    console.log(err);
+    res.status(401).json(err.message);
+  }
+};
+
+exports.updatePassword = async (req, res, next) => {
+  try {
+    const forgotPasswordRequestID = req.body.forgotPasswordRequestID;
+    const newPassword = req.body.password;
+    const saltRounds = 10;
+    bcrypt.hash(newPassword, saltRounds, async (err, hash) => {
+      if (err) throw new Error("Error while generating hash");
+      else if (hash) {
+        const forgotPassword = await ForgotPassword.findByPk(
+          forgotPasswordRequestID
+        );
+        const updateForgotPasswordActive = await forgotPassword.update({
+          isActive: "false",
+        });
+        const userWithUpdatedPassword = await User.update(
+          { password: hash },
+          { where: { id: forgotPassword.userId } }
+        );
+        console.log(
+          "here",
+          forgotPassword,"......... ", 
+          updateForgotPasswordActive,"......... ",
+          userWithUpdatedPassword
+        );
+        res.statusMessage = "User password changed successfully";
+        res.status(201).json({message:"User password changed successfully"});
+      }
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(401).json(err.message);
   }
 };
