@@ -2,6 +2,13 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+/*imports for sib-api-v3-sdk api BREVO(previously SendInBlue)*/
+const SIB = require("sib-api-v3-sdk");
+const defaultClient = SIB.ApiClient.instance;
+const apiKey = defaultClient.authentications["api-key"];
+apiKey.apiKey = process.env.EMAIL_API_KEY;
+const apiInstance = new SIB.TransactionalEmailsApi();
+
 exports.generateAccessToken = (id, isPremium) => {
   return jwt.sign({ userID: id, isPremium }, process.env.SECRET_AUTH_KEY);
 };
@@ -62,5 +69,40 @@ exports.postUserLogin = async (req, res, next) => {
     console.log(err);
     res.statusMessage = "E-mail doesn't exists. Please check again!";
     res.status(400).json(err);
+  }
+};
+
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const toEmail = req.body.email;
+    const sender = {
+      email: "abhayhasrani@gmail.com",
+      name: "Abhay",
+    };
+
+    const receivers = [
+      {
+        email: toEmail,
+      },
+    ];
+
+    const result = await apiInstance.sendTransacEmail({
+      sender,
+      to: receivers,
+      subject: "Please click the below link to reset your password. Thank You!",
+      textContent: `This is text content and i am {{params.anyVariable}}`,
+      // htmlContent:`<h1>i am a h1 heading</h1>`, //html content overrides text content
+      params: {
+        anyVariable: "anyVariable",
+      },
+    });
+    console.log(result);
+    res.json({
+      emailDetails: result,
+      message: "Please Check your registered Email for the Link",
+    });
+  } catch (error) {
+    console.log(err);
+    res.status(402).json({ message: "Couldn't generate forgot password link" });
   }
 };

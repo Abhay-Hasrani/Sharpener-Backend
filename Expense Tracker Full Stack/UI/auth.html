@@ -7,8 +7,13 @@
     <link rel="stylesheet" href="../styles/auth.css" />
   </head>
   <body>
-    <div class="form-box" id="signUpFormBox" style="display: none;">
-      <form class="form" id="signUpForm" method="POST" action="http://localhost:3000/auth/signUp">
+    <div class="form-box" id="signUpFormBox" style="display: none">
+      <form
+        class="form"
+        id="signUpForm"
+        method="POST"
+        action="http://localhost:3000/auth/signUp"
+      >
         <span class="title">Sign up</span>
         <span class="subtitle">Create a free account with your email.</span>
         <div class="form-container">
@@ -42,12 +47,24 @@
         <button type="submit">Sign up</button>
       </form>
       <div class="form-section">
-        <p>Have an account? <a id="btn_login" onclick="logInFormToggler()" href="#">Log in</a></p>
+        <p>
+          Have an account?
+          <a id="btn_login" onclick="showForm('log_in')" href="#">Log in</a>
+        </p>
+        <p>
+          <a id="btn_signUp" onclick="showForm('forgot_password')" href="#"
+            >Forgot Password?</a
+          >
+        </p>
       </div>
     </div>
-
     <div class="form-box" id="logInFormBox">
-      <form class="form" id="logInForm" method="POST" action="http://localhost:3000/auth/logIn">
+      <form
+        class="form"
+        id="logInForm"
+        method="POST"
+        action="http://localhost:3000/auth/logIn"
+      >
         <span class="title">Log In</span>
         <span class="subtitle">Log In with your email and password</span>
         <div class="form-container">
@@ -72,7 +89,50 @@
         <button type="submit">Log In</button>
       </form>
       <div class="form-section">
-        <p>New User? <a id="btn_signUp" onclick="logInFormToggler()" href="#">Create an account!</a></p>
+        <p>
+          New User?
+          <a id="btn_signUp" onclick="showForm('sign_up')" href="#"
+            >Create an account!</a
+          >
+        </p>
+        <p>
+          <a id="btn_signUp" onclick="showForm('forgot_password')" href="#"
+            >Forgot Password?</a
+          >
+        </p>
+      </div>
+    </div>
+    <div class="form-box" id="forgotPasswordFormBox" style="display: none">
+      <form
+        class="form"
+        id="forgotPasswordForm"
+        method="POST"
+        action="http://localhost:3000/password/forgotPassword"
+      >
+        <span class="title">Forgot Password?</span>
+        <span class="subtitle">Generate a link on your registered email.</span>
+        <div class="form-container">
+          <input
+            type="email"
+            class="input"
+            id="forgot_password_email"
+            name="email"
+            placeholder="Email"
+            required
+          />
+        </div>
+        <button type="submit">Send Mail</button>
+      </form>
+      <div class="form-section">
+        <p>
+          New User?
+          <a id="btn_signUp" onclick="showForm('sing_up')" href="#"
+            >Create an account!</a
+          >
+        </p>
+        <p>
+          <a id="btn_login" onclick="showForm('log_in')" href="#">Log in</a>
+        </p>
       </div>
     </div>
   </body>
