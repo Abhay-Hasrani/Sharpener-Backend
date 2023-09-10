@@ -6,6 +6,9 @@ const leaderBoardList = document.getElementById("leaderboard-list");
 const premiumBtn = document.getElementById("premium-btn");
 const leaderboardBtn = document.getElementById("leaderboard-btn");
 const listTitle = document.getElementById("list-title");
+const premiumFeatures = document.getElementById("premium-features");
+const filterByDateBtn = document.getElementById("filter-by-date-btn");
+const filterByDateForm = document.getElementById("filter-by-date-form");
 
 const baseUrl = "http://localhost:3000";
 
@@ -19,6 +22,8 @@ const updateTransactionStatusUrl = purchaseBaseUrl + "/updateTransactionStatus";
 
 const premiumBaseUrl = baseUrl + "/premium";
 const leaderboardUrl = premiumBaseUrl + "/leaderboard";
+
+let isFilterVisible = false;
 
 const AuthenticationToken = localStorage.getItem("token");
 axios.defaults.headers.common["AuthenticationToken"] = AuthenticationToken;
@@ -42,7 +47,7 @@ function activatePremium() {
   const isPremium = parseJwt(AuthenticationToken).isPremium;
   // console.log(isPremium);
   if (isPremium) {
-    leaderboardBtn.style.display = "block";
+    premiumFeatures.style.display = "flex";
     const newElement = document.createElement("div");
     newElement.textContent = "Premium User : ";
     newElement.style =
@@ -66,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
       leaderBoardList.removeChild(leaderBoardList.firstChild);
     const result2 = await axios.get(leaderboardUrl);
     const leaderBoardObjList = result2.data;
-    console.log(result2);
+    // console.log(result2);
     for (const leaderBoardObj of leaderBoardObjList)
       addLeaderBoardListItemToUI(leaderBoardObj);
   } catch (error) {
@@ -173,4 +178,17 @@ leaderboardBtn.addEventListener("click", (e) => {
     leaderBoardList.style.display = "block";
     listTitle.textContent = "Leaderboard :";
   }
+});
+
+filterByDateBtn.addEventListener("click", (e) => {
+  isFilterVisible = !isFilterVisible;
+  filterByDateForm.style.display = isFilterVisible ? "flex" : "none";
+});
+
+filterByDateForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const formData = new FormData(filterByDateForm);
+  const userData = {};
+  for (const [name, value] of formData.entries()) userData[name] = value;
+  console.log(userData);
 });

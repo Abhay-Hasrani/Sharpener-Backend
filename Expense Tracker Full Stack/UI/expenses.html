@@ -11,10 +11,19 @@
   <body>
     <div class="premium-box">
       <button class="premium-btn" id="premium-btn"></button>
-      <button class="leaderboard-btn" id="leaderboard-btn">Leaderboard</button>
+      <div id="premium-features">
+        <button class="premium-feature-btn" id="leaderboard-btn">Leaderboard</button>
+        <div class="subnav">
+          <button class="premium-feature-btn" id="filter-by-date-btn">Filter</button>
+        </div>
+      </div>
     </div>
-
     
+    <form class="date-form" id="filter-by-date-form">
+      <input type="date" placeholder="from yyyy-MM-dd" class="form__field date-input" id="date-from" name="from" />
+      <input type="date" class="form__field date-input" id="date-to" name="to" />
+      <button type="submit" class="button-81">Filter</button>
+    </form>
     <div class="form-box">
       <form id="expense-form" class="form">
         <div class="title">Add Your Expesnes...</div>
@@ -84,10 +93,8 @@
         </div>
       </li>
     </ul>
-    <ol style="display: none;" class="leaderboard-list" id="leaderboard-list">
-      <li class="leaderboard-list-item" id="leaderboard-list-item">
-        
-      </li>
+    <ol style="display: none" class="leaderboard-list" id="leaderboard-list">
+      <li class="leaderboard-list-item" id="leaderboard-list-item"></li>
     </ol>
   </body>
 
