@@ -9,12 +9,18 @@ const listTitle = document.getElementById("list-title");
 const premiumFeatures = document.getElementById("premium-features");
 const filterByDateBtn = document.getElementById("filter-by-date-btn");
 const filterByDateForm = document.getElementById("filter-by-date-form");
+const downloadBtn = document.getElementById("download-btn");
+const allDownloadsBtn = document.getElementById("all-downloads-btn");
+const downloadListItem = document.getElementById("download-list-item");
+const downloadList = document.getElementById("download-list");
 
 const baseUrl = "http://localhost:3000";
 
 const expenseBaseUrl = baseUrl + "/expense";
 const addExpenseUrl = expenseBaseUrl + "/add-expense";
 const deleteExpenseUrl = expenseBaseUrl + "/delete-expense/";
+const downloadExpenseUrl = expenseBaseUrl + "/download-expense";
+const allDownloadsExpenseUrl = expenseBaseUrl + "/all-downloads-expenses";
 
 const purchaseBaseUrl = baseUrl + "/purchase";
 const purchasePremiumUrl = purchaseBaseUrl + "/premium";
@@ -56,24 +62,39 @@ function activatePremium() {
   }
 }
 
+async function refreshExpenseList(dateFilter) {
+  while (expenseList.hasChildNodes())
+    expenseList.removeChild(expenseList.firstChild);
+  const result = await axios.get(expenseBaseUrl);
+  let expenses = result.data;
+  // console.log(expenses);
+  if (dateFilter) {
+    const from = new Date(dateFilter.from);
+    const to = new Date(dateFilter.to);
+    expenses = expenses.filter((expense) => {
+      const createdAt = new Date(expense.createdAt);
+      return createdAt >= from && createdAt <= to;
+    });
+  }
+  for (const expense of expenses) addExpenseListItemToUI(expense);
+}
+
+async function refreshLeaderBoardList() {
+  while (leaderBoardList.hasChildNodes())
+    leaderBoardList.removeChild(leaderBoardList.firstChild);
+  const result2 = await axios.get(leaderboardUrl);
+  const leaderBoardObjList = result2.data;
+  // console.log(result2);
+  for (const leaderBoardObj of leaderBoardObjList)
+    addLeaderBoardListItemToUI(leaderBoardObj);
+}
+
 document.addEventListener("DOMContentLoaded", async (e) => {
   try {
     activatePremium();
-
-    while (expenseList.hasChildNodes())
-      expenseList.removeChild(expenseList.firstChild);
-    const result = await axios.get(expenseBaseUrl);
-    const expenses = result.data;
-    for (const expense of expenses) addExpenseListItemToUI(expense);
-
+    refreshExpenseList();
+    refreshLeaderBoardList();
     //doing above thing for leaderboard list
-    while (leaderBoardList.hasChildNodes())
-      leaderBoardList.removeChild(leaderBoardList.firstChild);
-    const result2 = await axios.get(leaderboardUrl);
-    const leaderBoardObjList = result2.data;
-    // console.log(result2);
-    for (const leaderBoardObj of leaderBoardObjList)
-      addLeaderBoardListItemToUI(leaderBoardObj);
   } catch (error) {
     console.log(error);
     alert(error.response.statusText);
@@ -190,5 +211,55 @@ filterByDateForm.addEventListener("submit", (e) => {
   const formData = new FormData(filterByDateForm);
   const userData = {};
   for (const [name, value] of formData.entries()) userData[name] = value;
-  console.log(userData);
+  // console.log(new Date(userData.from).toDateString());
+  // console.log(userData);
+  refreshExpenseList(userData);
+});
+
+downloadBtn.addEventListener("click", async (e) => {
+  try {
+    const downloadResult = await axios.get(downloadExpenseUrl);
+    if (downloadResult.status === 201) {
+      const { fileUrl } = downloadResult.data;
+      console.log(fileUrl);
+      const a = document.createElement("a");
+      a.href = fileUrl;
+      a.download = "Expenses.csv";
+      a.click();
+    }
+  } catch (err) {
+    console.log("error while donloading expenses");
+    console.log(err);
+  }
+});
+
+function addDownloadListItem(downloadItem) {
+  const newListItem = downloadListItem.cloneNode(true);
+  newListItem.removeAttribute("id");
+  newListItem.style.display = "block";
+
+  const a = document.createElement("a");
+  a.href = downloadItem.fileUrl;
+  a.download = "Expenses.csv";
+  a.textContent = new Date(downloadItem.createdAt).toDateString();
+
+  newListItem.appendChild(a);
+
+  downloadList.append(newListItem);
+}
+
+allDownloadsBtn.addEventListener("click", async (e) => {
+  try {
+    const allDownloadsResult = await axios.get(allDownloadsExpenseUrl);
+    if (allDownloadsResult.status === 201) {
+      const allDownloads = allDownloadsResult.data;
+      // console.log(allDownloads);
+      for (const downloadItem of allDownloads) {
+        addDownloadListItem(downloadItem);
+      }
+    }
+  } catch (err) {
+    console.log("error while donloading expenses");
+    console.log(err);
+  }
 });

@@ -15,6 +15,7 @@ const User = require("./models/user");
 const Expense = require("./models/expense");
 const Order = require("./models/order");
 const ForgotPassword = require("./models/forgotPassword");
+const FilesDownloaded = require("./models/filesDownloaded");
 
 const app = express();
 
@@ -36,6 +37,9 @@ Order.belongsTo(User);
 
 User.hasMany(ForgotPassword);
 ForgotPassword.belongsTo(User);
+
+User.hasMany(FilesDownloaded);
+FilesDownloaded.belongsTo(User);
 
 database
   .sync()

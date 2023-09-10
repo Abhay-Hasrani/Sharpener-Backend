@@ -1,5 +1,6 @@
 const Expense = require("../models/expense");
 const database = require("../db/database");
+const s3Services = require("../services/s3Services");
 
 exports.getAllExpenses = async (req, res, next) => {
   try {
@@ -69,5 +70,44 @@ exports.deleteExpense = async (req, res, next) => {
     await transaction.rollback();
     res.statusMessage = "Error while deleting expense";
     res.status(402).json({ message: err.message });
+  }
+};
+
+exports.downloadExpense = async (req, res, next) => {
+  if (!req.user.isPremium) {
+    throw new Error("Not a premium User");
+  }
+  const transaction = await database.transaction();
+  try {
+    const expenses = await req.user.getExpenses(transaction);
+    // console.log(expenses);
+    if (!expenses) throw Error("Failed to get Expenses");
+    const stringifiedExpenses = JSON.stringify(expenses);
+    const filename = `Expense-${req.user.username}-${new Date()}.txt`;
+    const fileInfo = await s3Services.uploadToS3(stringifiedExpenses, filename);
+    const filesDownloadedRow = await req.user.createFilesDownloaded(
+      {
+        fileUrl: fileInfo.Location,
+      },
+      { transaction }
+    );
+    await transaction.commit();
+    console.log(filesDownloadedRow);
+    res.status(201).json({ fileUrl: fileInfo.Location, success: true });
+  } catch (error) {
+    await transaction.rollback();
+    console.log("Error while uploading expense to aws", err);
+    res.status(401).json(err);
+  }
+};
+
+exports.allDownloadedExpenses = async (req, res, next) => {
+  try {
+    const filesDownloaded = await req.user.getFilesDownloadeds();
+    console.log(filesDownloaded);
+    res.status(201).json(filesDownloaded);
+  } catch (err) {
+    console.log("Error while retrieving all downloaded expenses", err);
+    res.status(401).json(err);
   }
 };

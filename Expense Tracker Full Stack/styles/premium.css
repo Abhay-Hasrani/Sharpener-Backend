@@ -68,6 +68,7 @@
   text-transform: uppercase;
   text-decoration: none;
   border: 2px solid white;
+  border-radius: 30px;
   padding: 8px 15px;
   font-size: 12px;
   font-weight: bold;
@@ -84,25 +85,7 @@
 } 
 
 /* drop down for date picker */
-.navbar {
-  overflow: hidden;
-  background-color: #333;
-}
 
-.subnav {
-  float: left;
-  overflow: hidden;
-}
-
-.subnav {
-  font-size: 16px;
-  border: none;
-  outline: none;
-  color: white;
-  background-color: inherit;
-  font-family: inherit;
-  margin: 0;
-}
 .date-form {
   display: none;
   left: 0;
@@ -114,11 +97,6 @@
 .date-input{
   margin: 0 5px;
 }
-
-/* .subnav:hover .date-form {
-  display: flex;
-} */
-
 /* CSS */
 .button-81 {
   background-color: #fff;
@@ -146,4 +124,87 @@
 .button-81:hover {
   background-color: #1e293b;
   color: #fff;
+}
+
+
+/*download button*/
+.download-btn {
+  display: inline-block;
+  position: relative;
+  padding: 10px 25px;
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+  text-decoration: none;
+  font-size: 0.9em;
+  text-align: center;
+  text-indent: 15px;
+  border: none;
+  border: 2px solid white;
+  line-height: 1.4;
+  border-radius: 30px;
+  margin: 0 10px;
+}
+
+.download-btn:hover {
+  color: #ffd277;
+  border-color: #ffd277;
+}
+
+.download-btn:before, .download-btn:after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  left: 15px;
+  top: 52%;
+}
+
+.download-btn:before {
+  width: 10px;
+  height: 2px;
+  border-style: solid;
+  border-width: 0 2px 2px;
+}
+
+.download-btn:after {
+  width: 0;
+  height: 0;
+  margin-left: 3px;
+  margin-top: -7px;
+  border-style: solid;
+  border-width: 4px 4px 0 4px;
+  border-color: transparent;
+  border-top-color: inherit;
+  animation: downloadArrow 1s linear infinite;
+  animation-play-state: paused;
+}
+
+.download-btn:hover:before {
+  border-color: #cdefbd;
+}
+
+.download-btn:hover:after {
+  border-top-color: #cdefbd;
+  animation-play-state: running;
+}
+
+@keyframes downloadArrow {
+  0% {
+    margin-top: -7px;
+    opacity: 1;
+  }
+
+  0.001% {
+    margin-top: -15px;
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    margin-top: 0;
+    opacity: 0.4;
+  }
 }
