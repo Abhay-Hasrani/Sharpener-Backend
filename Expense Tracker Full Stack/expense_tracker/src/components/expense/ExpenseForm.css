@@ -1,0 +1,184 @@
+/* body {
+    background-color: rgb(110, 85, 53);
+    margin: 5px;
+  }
+   */
+  .title {
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+    font-size: 25px;
+  }
+  
+  .title:hover {
+    font-weight: bold;
+    color: #38caef;
+  }
+  
+  .form-box {
+    max-width: 500px;
+    background-color: #0b0c0c;
+    border-radius: 16px;
+    color: #fff;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .form {
+    padding: 20px 30px;
+  }
+  
+  .form__group {
+    position: relative;
+    padding: 15px 0;
+    width: 100%;
+    /* max-width: 180px; */
+  }
+  
+  .form__field {
+    color: white;
+    font-family: inherit;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #9b9b9b;
+    outline: 0;
+    font-size: 17px;
+    padding: 7px 0;
+    background: transparent;
+    transition: border-color 0.2s;
+  }
+  
+  .form__field::placeholder {
+    color: transparent;
+  }
+  
+  .form__field:placeholder-shown ~ .form__label {
+    font-size: 17px;
+    cursor: text;
+    top: 20px;
+  }
+  
+  .form__label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 17px;
+    color: #9b9b9b;
+    pointer-events: none;
+  }
+  
+  .form__field:focus {
+    padding-bottom: 6px;
+    font-weight: 700;
+    border-width: 3px;
+    border-image: linear-gradient(to right, #116399, #38caef);
+    border-image-slice: 1;
+  }
+  
+  .form__field:focus ~ .form__label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.2s;
+    font-size: 17px;
+    color: #38caef;
+    font-weight: 700;
+  }
+  
+  /* reset input */
+  .form__field:required,
+  .form__field:invalid {
+    box-shadow: none;
+  }
+  
+  /* below is for select*/
+  .box {
+    padding: 20px 0px;
+  }
+  
+  .box select {
+    background-color: #0b0c0c;
+    color: #9b9b9b;
+    width: 250px;
+    border: none;
+    padding: 0 0 3px;
+    font-size: 17px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    -webkit-appearance: button;
+    appearance: button;
+    border-bottom: 2px solid #9b9b9b;
+    outline: none;
+  }
+  
+  .box::before {
+    width: 20%;
+    height: 100%;
+    text-align: center;
+    font-size: 28px;
+    line-height: 45px;
+    color: #9b9b9b;
+    background-color: rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+  }
+  
+  .box select option {
+    padding: 30px;
+  }
+  
+  select:focus {
+    font-weight: 700;
+    border-width: 3px;
+    border-image: linear-gradient(to right, #116399, #38caef);
+    border-image-slice: 1;
+    color: #38caef;
+  }
+  
+  option:checked,
+  option:hover {
+    color: white;
+  }
+  
+  /* below is for add button*/
+  .diagonal-button {
+    padding: 10px 20px;
+    /* background-color: rgb(33, 37, 41, 0.1); */
+    background-color: white;
+    color: black;
+    font-size: 16px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s;
+    border: solid 3px rgb(212, 195, 195);
+    border-radius: 20%;
+  }
+  
+  .diagonal-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(33, 37, 41);
+    transform: skewX(-30deg);
+    transition: 0.5s;
+  }
+  
+  .diagonal-button:hover,
+  .diagonal-button:focus {
+    font-weight: bolder;
+  }
+  
+  .diagonal-button:hover::before,
+  .diagonal-button:focus::before {
+    left: 100%;
+  }
+  
+  /*Horizontal line*/
+  
+  .horizontal-line {
+    border: solid black 1px;
+    margin-top: 15px;
+  }

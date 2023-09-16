@@ -110,7 +110,7 @@ exports.forgotPassword = async (req, res, next) => {
       to: receivers,
       subject: "Please click the below link to reset your password. Thank You!",
       htmlContent: `<h3>Click Below Link To reset your password</h3>
-      <a href="http://localhost:3000/password/resetPassword/${forgotPasswordRequest.id}">Reset</a>`, //html content overrides text content
+      <a href="http://localhost:4000/password/resetPassword/${forgotPasswordRequest.id}">Reset</a>`, //html content overrides text content
       // textContent: `This is text content and i am {{params.anyVariable}}`,
       // params: {
       //   anyVariable: "anyVariable",
@@ -140,10 +140,11 @@ exports.resetPassword = async (req, res, next) => {
     if (isRequestValid && isRequestValid.isActive) {
       //below linedoesnt work due to security reasons so need to use sendFile
       // res.redirect("file:///c%3A/Users/91983/SharpenerBackEnd/Expense%20Tracker%20Full%20Stack/UI/passwordReset.html");
-      res.sendFile(
-        path.join(__dirname, "..", "..", "UI", "passwordReset.html"),
-        path.join(__dirname, "..", "..", "styles", "auth.css")
-      );
+      res.redirect("http://localhost:3000/resetPassword/"+forgotPasswordRequestID);
+      // res.sendFile(
+      //   path.join(__dirname, "..", "..", "UI", "passwordReset.html"),
+      //   path.join(__dirname, "..", "..", "styles", "auth.css")
+      // );
     } else throw new Error("Request Link has Expired");
   } catch (err) {
     console.log(err);

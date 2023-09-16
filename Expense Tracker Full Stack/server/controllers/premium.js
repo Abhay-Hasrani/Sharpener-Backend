@@ -21,6 +21,7 @@ exports.getLeaderBoard = async (req, res, next) => {
 
     const result = await User.findAll({
       attributes: ["id", "username", "totalExpense"],
+      order: [["totalExpense", "desc"]],
     });
     // console.log(result);
     res.status(200).json(result);

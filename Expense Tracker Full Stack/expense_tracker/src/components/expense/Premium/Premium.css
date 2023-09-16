@@ -1,5 +1,5 @@
 .premium-box {
-  margin: 5px 0;
+  margin: 5px 5px;
   display: flex;
 }
 /*below is for premium button*/
@@ -58,9 +58,6 @@
   transform: scale(0.95);
 }
 
-#premium-features {
-  display: none;
-}
 /*premium features button*/
 
 .premium-feature-btn {
@@ -82,19 +79,18 @@
 .premium-feature-btn:hover {
   color: #ffd277;
   border-color: #ffd277;
-} 
+}
 
 /* drop down for date picker */
 
 .date-form {
-  display: none;
   left: 0;
   background-color: transparent;
   width: 100%;
   z-index: 1;
 }
 
-.date-input{
+.date-input {
   margin: 0 5px;
 }
 /* CSS */
@@ -106,7 +102,9 @@
   color: #0d172a;
   cursor: pointer;
   display: inline-block;
-  font-family: "Basier circle",-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  font-family: "Basier circle", -apple-system, system-ui, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 1.1rem;
   font-weight: 600;
   line-height: 1;
@@ -114,7 +112,7 @@
   text-align: center;
   text-decoration: none #0d172a solid;
   text-decoration-thickness: auto;
-  transition: all .1s cubic-bezier(.4, 0, .2, 1);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0px 1px 2px rgba(166, 175, 195, 0.25);
   user-select: none;
   -webkit-user-select: none;
@@ -125,7 +123,6 @@
   background-color: #1e293b;
   color: #fff;
 }
-
 
 /*download button*/
 .download-btn {
@@ -151,8 +148,9 @@
   border-color: #ffd277;
 }
 
-.download-btn:before, .download-btn:after {
-  content: ' ';
+.download-btn:before,
+.download-btn:after {
+  content: " ";
   display: block;
   position: absolute;
   left: 15px;
@@ -207,4 +205,63 @@
     margin-top: 0;
     opacity: 0.4;
   }
+}
+
+.pro-btn {
+  padding: 0.9em 1.8em;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 4px;
+  color: transparent;
+  /* border: 3px solid transparent;
+    border-radius: 30px; */
+  border: none;
+  font-size: 14px;
+  position: relative;
+  font-family: inherit;
+  background: transparent;
+}
+
+.pro-btn::before {
+  content: "Subsribed";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #363636;
+  color: #ff0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s;
+}
+
+.pro-btn:hover::before {
+  left: 100%;
+  transform: scale(0) rotateY(360deg);
+  opacity: 0;
+}
+
+.pro-btn::after {
+  content: "Pro User";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: #363636;
+  color: #ff0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s;
+  transform: scale(0) rotateY(0deg);
+  opacity: 0;
+}
+
+.pro-btn:hover::after {
+  left: 0;
+  transform: scale(1) rotateY(360deg);
+  opacity: 1;
 }
