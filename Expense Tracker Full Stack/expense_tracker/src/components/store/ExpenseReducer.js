@@ -25,9 +25,10 @@ const ExpenseSlice = createSlice({
   },
 });
 export function getAllExpenses(pageNo) {
+  const pageItems = localStorage.getItem("pageItems") || 5;
   return async (dispatch) => {
     const result = await axios.get(
-      myUrls.expenseBaseUrl + `/?pageNo=${pageNo}`
+      myUrls.expenseBaseUrl + `/?pageNo=${pageNo}&pageItems=${pageItems}`
     );
     const { expenses, ...pagination } = result.data;
     dispatch(UIActions.setPagination(pagination));

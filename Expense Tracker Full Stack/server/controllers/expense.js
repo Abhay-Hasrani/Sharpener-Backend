@@ -2,10 +2,10 @@ const Expense = require("../models/expense");
 const database = require("../db/database");
 const s3Services = require("../services/s3Services");
 
-const ITEMS_PER_PAGE = 5;
 
 exports.getAllExpenses = async (req, res, next) => {
   const transaction = await database.transaction();
+  const ITEMS_PER_PAGE = +req.query.pageItems || 5;
   let pageNo = +req.query.pageNo;
   if (pageNo && pageNo <= 0) pageNo = 1;
   try {
