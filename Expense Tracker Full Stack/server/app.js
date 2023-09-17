@@ -1,9 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-require('dotenv').config();
+require("dotenv").config();
 const bodyParser = require("body-parser");
 const database = require("./db/database");
+const helmet = require("helmet");
+const morgan = require("morgan");
+const fs = require("fs");
 
 const authRoutes = require("./routes/auth");
 const expenseRoutes = require("./routes/expense");
@@ -22,13 +25,19 @@ const app = express();
 app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json({ extended: false }));
+app.use(helmet());
+
+const logStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
+  flags: "a",
+});
+app.use(morgan("combined", { stream: logStream }));
 
 app.use("/auth", authRoutes);
 app.use("/expense", expenseRoutes);
 app.use("/purchase", purchaseRoutes);
 app.use("/premium", premiumRoutes);
 app.use("/password", passwordRoutes);
- 
+
 User.hasMany(Expense);
 Expense.belongsTo(User);
 
@@ -43,5 +52,5 @@ FilesDownloaded.belongsTo(User);
 
 database
   .sync()
-  .then(() => app.listen(4000))
+  .then(() => app.listen(process.env.PORT || 4000))
   .catch((err) => console.log(err));

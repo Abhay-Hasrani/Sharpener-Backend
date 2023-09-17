@@ -4,11 +4,10 @@ import myUrls from "../../../utils/myUrls";
 import useRazorpay from "react-razorpay";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { expenseActions } from "../../store/ExpenseReducer";
 import { UIActions } from "../../store/UiReducer";
+import FilterForm from "./FilterForm";
 const Premium = () => {
   const dispatch = useDispatch();
-  const expenses = useSelector((state) => state.expense.expenses);
   const isPremium = useSelector((state) => state.UI.isPremium);
   const [Razorpay] = useRazorpay();
   const [showFilter, setShowFilter] = useState(false);
@@ -27,27 +26,6 @@ const Premium = () => {
       console.log("Error while downloading expenses");
       console.log(err);
     }
-  }
-  function filterList(prevList, userData) {
-    const from = new Date(userData.from);
-    const to = new Date(userData.to);
-    const newList = prevList.filter((expense) => {
-      const createdAt = new Date(expense.createdAt);
-      return createdAt >= from && createdAt <= to;
-    });
-    return newList;
-  }
-
-  function filterFormHandler(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const userData = {};
-    for (const [name, value] of formData.entries()) userData[name] = value;
-    // console.log(new Date(userData.from).toDateString());
-    // console.log(userData);
-
-    const newList = filterList(expenses, userData);
-    dispatch(expenseActions.replaceFilteredExpenses(newList));
   }
 
   async function premiumBtnClickHandler(e) {
@@ -127,30 +105,7 @@ const Premium = () => {
           </div>
         )}
       </div>
-      {showFilter && (
-        <form
-          className="date-form"
-          id="filter-by-date-form"
-          onSubmit={filterFormHandler}
-        >
-          <input
-            type="date"
-            placeholder="from yyyy-MM-dd"
-            className="form__field date-input"
-            id="date-from"
-            name="from"
-          />
-          <input
-            type="date"
-            className="form__field date-input"
-            id="date-to"
-            name="to"
-          />
-          <button type="submit" className="button-81">
-            Filter
-          </button>
-        </form>
-      )}
+      {showFilter && <FilterForm />}
     </>
   );
 };
