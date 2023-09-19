@@ -24,7 +24,7 @@ const ExpenseSlice = createSlice({
     },
   },
 });
-export function getAllExpenses(pageNo) {
+export function getAllExpenses(pageNo=1) {
   const pageItems = localStorage.getItem("pageItems") || 5;
   return async (dispatch) => {
     const result = await axios.get(

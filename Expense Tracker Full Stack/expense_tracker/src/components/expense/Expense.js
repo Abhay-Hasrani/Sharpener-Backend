@@ -13,7 +13,7 @@ const Expense = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getAllExpenses(1));
+    dispatch(getAllExpenses());
   }, [dispatch]);
 
   useEffect(() => {

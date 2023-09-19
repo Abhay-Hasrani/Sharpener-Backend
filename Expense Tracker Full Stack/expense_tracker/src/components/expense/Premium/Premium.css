@@ -181,7 +181,7 @@
 }
 
 .pro-btn::before {
-  content: "Subsribed";
+  content: "Subscribed";
   position: absolute;
   top: 0;
   left: 0;

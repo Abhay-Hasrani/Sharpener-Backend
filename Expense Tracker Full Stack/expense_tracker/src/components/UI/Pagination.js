@@ -4,7 +4,9 @@ import { getAllExpenses } from "../store/ExpenseReducer";
 import { Dropdown } from "react-bootstrap";
 import { useState } from "react";
 const Pagination = () => {
-  const [selectedItem, setSelectedItem] = useState(5);
+  const [selectedItem, setSelectedItem] = useState(
+    localStorage.getItem("pageItems") || 5
+  );
   const {
     currentPage,
     hasNextPage,
@@ -18,7 +20,7 @@ const Pagination = () => {
   function handleSelect(eventKey) {
     setSelectedItem(eventKey);
     localStorage.setItem("pageItems", +eventKey);
-    dispatch(getAllExpenses(currentPage));
+    dispatch(getAllExpenses());
   }
 
   function pageClickHandler(pageNo) {

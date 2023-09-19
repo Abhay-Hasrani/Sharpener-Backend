@@ -50,7 +50,7 @@
   
   .edit-button::before {
     display: none;
-    content: "Edit";
+    content: "Detail";
     color: white;
     transition-duration: 0.3s;
     font-size: 2px;
