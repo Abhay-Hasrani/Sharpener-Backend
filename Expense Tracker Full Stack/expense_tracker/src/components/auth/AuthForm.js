@@ -19,7 +19,6 @@ const AuthForm = (props) => {
               name="username"
               className="auth-input"
               placeholder="Full Name"
-              defaultValue="Abhay Hasrani"
               required
             />
           )}
@@ -29,7 +28,6 @@ const AuthForm = (props) => {
               className="auth-input"
               name="email"
               placeholder="Email"
-              defaultValue="abhayhasrani@gmail.com"
               required
             />
           )}
