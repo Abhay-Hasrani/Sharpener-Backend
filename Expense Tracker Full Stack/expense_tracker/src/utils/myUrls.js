@@ -1,5 +1,5 @@
 const myUrls = {};
-myUrls.baseUrl = "http://localhost:4000";
+myUrls.baseUrl = "http://16.171.3.251:4000"//"http://localhost:4000";
 
 myUrls.authBaseUrl = myUrls.baseUrl + "/auth";
 myUrls.signUpUrl = myUrls.authBaseUrl + "/signUp";
