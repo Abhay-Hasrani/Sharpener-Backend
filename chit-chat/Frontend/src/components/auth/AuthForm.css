@@ -10,7 +10,7 @@
   align-items: center;
 }
 
-.auth-form   {
+.auth-form {
   width: max-content;
   height: max-content;
   background-image: linear-gradient(to bottom, #424242, #212121);
@@ -60,4 +60,16 @@
 .auth-btn:hover {
   background-color: antiquewhite;
   box-shadow: none;
+}
+
+.link-button {
+  font-weight: bold;
+  color: #0066ff;
+  transition: color 0.3s ease;
+  margin-top: 20px;
+  background: none;
+  border: none;
+}
+.link-button:hover{
+  text-decoration: underline;
 }

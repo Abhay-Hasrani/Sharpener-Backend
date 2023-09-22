@@ -32,3 +32,7 @@ export function authSignUpHanlder(req: any, res: any) {
     }
   });
 }
+
+export function authLogInHanlder(req:any,res:any){
+  
+}
