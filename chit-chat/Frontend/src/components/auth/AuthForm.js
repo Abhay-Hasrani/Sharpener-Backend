@@ -1,15 +1,39 @@
 import "./AuthForm.css";
-const AuthForm = () => {
+const AuthForm = (props) => {
   return (
     <div className="auth-form-container">
-      <form className="auth-form" action="">
-        <p className="auth-form-title">Sign Up</p>
-        <input placeholder="Name" className="auth-input" type="text" required/>
-        <input placeholder="E-mail" className="auth-input" type="email" required/>
-        <input placeholder="Mobile Number" className="auth-input" type="number" required/>
-        <input placeholder="Password" className="auth-input" type="password" required/>
+      <form className="auth-form" onSubmit={props.onSubmit}>
+        <p className="auth-form-title">{props.title}</p>
+        <input
+          placeholder="Name"
+          className="auth-input"
+          type="text"
+          name="username"
+          required
+        />
+        <input
+          placeholder="E-mail"
+          className="auth-input"
+          type="email"
+          name="email"
+          required
+        />
+        <input
+          placeholder="Mobile Number"
+          className="auth-input"
+          type="number"
+          name="mob_number"
+          required
+        />
+        <input
+          placeholder="Password"
+          className="auth-input"
+          type="password"
+          name="password"
+          required
+        />
         <button className="auth-btn" type="submit">
-          Sign Up
+          {props.title}
         </button>
       </form>
     </div>

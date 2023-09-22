@@ -16,9 +16,9 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node ./src/app.ts",
+    "start": "nodemon src/app.ts",
     "start:prod": "npm run build && node ./dist/app.js",
-    "build": "tsc.cmd"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "abhay",
