@@ -1,4 +1,3 @@
-import { Sequelize } from "sequelize";
 import database from "../db/database";
 import { INTEGER } from "sequelize";
 import { STRING } from "sequelize";

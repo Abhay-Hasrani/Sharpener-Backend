@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import User from "../models/User";
+import jwt from "jsonwebtoken";
 
 export function authSignUpHanlder(req: any, res: any) {
   const {
@@ -33,6 +34,36 @@ export function authSignUpHanlder(req: any, res: any) {
   });
 }
 
-export function authLogInHanlder(req:any,res:any){
-  
+export const generateAccessToken = (id: string): string => {
+  return jwt.sign({ userID: id }, process.env.SECRET_AUTH_KEY as string);
+};
+
+export async function authLogInHanlder(req: any, res: any) {
+  const { email, password }: { email: string; password: string } = req.body;
+  try {
+    const user: any = await User.findOne({
+      where: {
+        email: email,
+      },
+    });
+    if (!user) throw new Error("User Not found");
+    bcrypt.compare(password, user.password, (err, result) => {
+      try {
+        if (err) throw new Error("Error in hash");
+        if (!result) throw new Error("User Not Authorized!!!");
+        else {
+          res.status(200).json({
+            token: generateAccessToken(user.id),
+            message: "User Logged In successfully",
+          });
+        }
+      } catch (err: any) {
+        console.log(err.message);
+        res.status(400).json(err.message);
+      }
+    });
+  } catch (error: any) {
+    console.log(error.message);
+    res.status(400).json(error.message);
+  }
 }

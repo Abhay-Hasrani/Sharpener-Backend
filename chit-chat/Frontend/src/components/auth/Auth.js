@@ -32,11 +32,11 @@ const Auth = () => {
     const userData = {};
     for (const [name, value] of formData.entries()) userData[name] = value;
     try {
-      // const result = await axios.post(authLogInUrl, userData);
-      console.log(userData);
+      const result = await axios.post(authLogInUrl, userData);
+      console.log(result);
     } catch (error) {
-      console.log(error);
-      alert(error.response.statusText);
+      // console.log(error.data);
+      alert(error.response.data);
     }
   }
   return (
