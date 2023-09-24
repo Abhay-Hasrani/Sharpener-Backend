@@ -4,7 +4,7 @@ import AuthForm from "./AuthForm";
 import axios from "axios";
 import { useState } from "react";
 
-const Auth = () => {
+const Auth = (props) => {
   const [toggleLogIn, setToggleLogIn] = useState(true);
   const signUpFormProps = {
     title: "Sign Up",
@@ -21,6 +21,7 @@ const Auth = () => {
     try {
       const result = await axios.post(authSignUpUrl, userData);
       console.log(result.data);
+      setToggleLogIn(!toggleLogIn);
     } catch (error) {
       console.log(error);
       alert(error.response.statusText);
@@ -33,9 +34,9 @@ const Auth = () => {
     for (const [name, value] of formData.entries()) userData[name] = value;
     try {
       const result = await axios.post(authLogInUrl, userData);
-      console.log(result);
+      props.onLogInClicked(result.data);
     } catch (error) {
-      // console.log(error.data);
+      console.log(error);
       alert(error.response.data);
     }
   }

@@ -10,10 +10,11 @@ async function authenticateToken(req: any, res: any, next: any) {
     ) as { userID: string };
     const user = await User.findByPk(userID);
     req.user = user;
-    console.log(user);
     next();
-} catch (error) {
-      console.log(error);
+  } catch (error) {
+    console.log(error);
     res.status(401).json("Error while authenticating token");
   }
 }
+
+export default authenticateToken;

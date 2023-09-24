@@ -47,14 +47,22 @@ export async function authLogInHanlder(req: any, res: any) {
       },
     });
     if (!user) throw new Error("User Not found");
-    bcrypt.compare(password, user.password, (err, result) => {
+    bcrypt.compare(password, user.password, async (err, result) => {
       try {
         if (err) throw new Error("Error in hash");
         if (!result) throw new Error("User Not Authorized!!!");
         else {
+          const updatedUser: any = await user.update({ isLogged: true });
+          const onlineUsers: any = await User.findAll({
+            where: {
+              isLogged: true,
+            },
+          });
+          console.log("online ", onlineUsers);
           res.status(200).json({
             token: generateAccessToken(user.id),
             message: "User Logged In successfully",
+            onlineUsers,
           });
         }
       } catch (err: any) {
@@ -65,5 +73,15 @@ export async function authLogInHanlder(req: any, res: any) {
   } catch (error: any) {
     console.log(error.message);
     res.status(400).json(error.message);
+  }
+}
+
+export async function authLogOutHanlder(req: any, res: any) {
+  try {
+    const currentUser = req.user;
+    const updatedUser = await currentUser.update({ isLogged: false });
+    res.status(200).json("Logged Out Successfully");
+  } catch (error) {
+    res.status(400).json("Error logging out");
   }
 }

@@ -1,4 +1,5 @@
 import database from "../db/database";
+import { BOOLEAN } from "sequelize";
 import { INTEGER } from "sequelize";
 import { STRING } from "sequelize";
 
@@ -26,6 +27,11 @@ const User = database.define("users", {
   password: {
     type: STRING,
     allowNull: false,
+  },
+  isLogged: {
+    type: BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
   },
 });
 
