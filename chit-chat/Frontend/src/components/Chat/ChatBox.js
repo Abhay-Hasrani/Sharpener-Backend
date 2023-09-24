@@ -1,8 +1,18 @@
+import axios from "axios";
+import { addMessageUrl } from "../../utils/myUrls";
 import "./ChatBox.css";
 import ChatBoxHeader from "./ChatBoxHeader";
 import MessageItem from "./MessageItem";
 import UsersListItem from "./UsersListItem";
 const ChatBox = () => {
+  async function hey() {
+    console.log("hey");
+    const newMessage = await axios.post(addMessageUrl, {
+      messageText: "first message",
+      receiverId: 3,
+    });
+  }
+  // hey();
   return (
     <div className="container">
       <div className="row clearfix">

@@ -58,7 +58,7 @@ export async function authLogInHanlder(req: any, res: any) {
               isLogged: true,
             },
           });
-          console.log("online ", onlineUsers);
+          // console.log("online ", onlineUsers);
           res.status(200).json({
             token: generateAccessToken(user.id),
             message: "User Logged In successfully",

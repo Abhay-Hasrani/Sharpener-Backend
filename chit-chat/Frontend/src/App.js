@@ -5,11 +5,15 @@ import ChatBox from "./components/Chat/ChatBox";
 import { useState } from "react";
 import axios from "axios";
 import Header from "./components/Header/Header";
-import { authLogOutUrl } from "./utils/myUrls";
+import { addMessageUrl, authLogOutUrl } from "./utils/myUrls";
 
 function App() {
-  const [isLogged, setIsLogged] = useState(localStorage.getItem("token"));
-
+  const [isLogged, setIsLogged] = useState(
+    localStorage.getItem("token") !== null
+  );
+  if (isLogged)
+    axios.defaults.headers.common["AuthenticationToken"] =
+      localStorage.getItem("token");
   function onLogInClicked(userLoginData) {
     console.log(userLoginData);
     localStorage.setItem("token", userLoginData.token);
@@ -27,10 +31,6 @@ function App() {
       console.log(error);
       alert(error.response.data);
     }
-    // finally {
-    //   localStorage.clear();
-    //   setIsLogged(false);
-    // }
   }
   return (
     <Routes>
