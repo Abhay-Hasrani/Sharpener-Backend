@@ -1,3 +1,6 @@
+import { useSelector } from "react-redux";
+import { messageDateFormat } from "../../utils/dateUtil";
+
 /**
  * It is a Message Item in message/chat box
  * it takes below props
@@ -7,12 +10,14 @@
  * @returns Customized Message Item
  */
 const MessageItem = (props) => {
-  const { sentByOther } = props;
+  const currentUser = useSelector((state) => state.users.user);
+  const sentByOther = props.receiverId === currentUser.id;
+  const formattedDate = messageDateFormat(props.createdAt);
   return (
     <li className="clearfix">
       <div className={"message-data " + (sentByOther && "message-data-other")}>
         <span className="message-data-time">
-          {props.messageTime || "10:10 AM, Today"}
+          {formattedDate}
         </span>
         {sentByOther && (
           <img

@@ -1,3 +1,5 @@
+import { useSelector } from "react-redux";
+
 /**
  * Chat Box Header
  * It takes below props
@@ -7,37 +9,38 @@
  * @returns Chat Box Header Component
  */
 const ChatBoxHeader = (props) => {
+  const receiver = useSelector((state) => state.users.receiver);
   return (
     <div className="chat-header clearfix">
       <div className="row">
         <div className="col-lg-6">
-          <a href="#" data-toggle="modal" data-target="#view_info">
+          <div data-toggle="modal" data-target="#view_info">
             <img
               src={
-                props.profilePhotoUrl ||
+                receiver.profilePhotoUrl ||
                 "https://bootdey.com/img/Content/avatar/avatar2.png"
               }
               alt="avatar"
             />
-          </a>
+          </div>
           <div className="chat-about">
-            <h6 className="m-b-0">{props.userName || "Aiden Chavez"}</h6>
-            <small>Last seen: {props.lastSeen || "2 hours ago"}</small>
+            <h6 className="m-b-0">{receiver.username || "Aiden Chavez"}</h6>
+            {/* <small>Last seen: {props.lastSeen || "some time"}</small> */}
           </div>
         </div>
         <div className="col-lg-6 hidden-sm text-right">
-          <a href="#" className="btn btn-outline-secondary m-1">
+          <button className="btn btn-outline-secondary m-1">
             <i className="fa fa-camera"></i>
-          </a>
-          <a href="#" className="btn btn-outline-primary m-1">
+          </button>
+          <button className="btn btn-outline-primary m-1">
             <i className="fa fa-image"></i>
-          </a>
-          <a href="#" className="btn btn-outline-info m-1">
+          </button>
+          <button className="btn btn-outline-info m-1">
             <i className="fa fa-cogs"></i>
-          </a>
-          <a href="#" className="btn btn-outline-warning m-1">
+          </button>
+          <button className="btn btn-outline-warning m-1">
             <i className="fa fa-question"></i>
-          </a>
+          </button>
         </div>
       </div>
     </div>

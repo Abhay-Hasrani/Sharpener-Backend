@@ -53,16 +53,11 @@ export async function authLogInHanlder(req: any, res: any) {
         if (!result) throw new Error("User Not Authorized!!!");
         else {
           const updatedUser: any = await user.update({ isLogged: true });
-          const onlineUsers: any = await User.findAll({
-            where: {
-              isLogged: true,
-            },
-          });
-          // console.log("online ", onlineUsers);
+          const { password, ...otherData } = updatedUser.dataValues;
           res.status(200).json({
+            user: { ...otherData },
             token: generateAccessToken(user.id),
             message: "User Logged In successfully",
-            onlineUsers,
           });
         }
       } catch (err: any) {
@@ -83,5 +78,40 @@ export async function authLogOutHanlder(req: any, res: any) {
     res.status(200).json("Logged Out Successfully");
   } catch (error) {
     res.status(400).json("Error logging out");
+  }
+}
+
+export async function getOnlineUsers(req: any, res: any) {
+  try {
+    let onlineUsers: any = await User.findAll({
+      where: {
+        isLogged: true,
+      },
+    });
+    // console.log("online ", onlineUsers);
+    onlineUsers = onlineUsers.map((user: any) => {
+      const {
+        id,
+        isLogged,
+        email,
+        mob_number,
+        createdAt,
+        updatedAt,
+        username,
+      } = user;
+
+      return {
+        id,
+        isLogged,
+        email,
+        mob_number,
+        createdAt,
+        updatedAt,
+        username,
+      };
+    });
+    res.status(200).json(onlineUsers);
+  } catch (error) {
+    res.status(400).json("Error get online users out");
   }
 }
