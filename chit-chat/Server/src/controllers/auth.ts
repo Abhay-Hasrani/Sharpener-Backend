@@ -81,15 +81,11 @@ export async function authLogOutHanlder(req: any, res: any) {
   }
 }
 
-export async function getOnlineUsers(req: any, res: any) {
+export async function getAllUsers(req: any, res: any) {
   try {
-    let onlineUsers: any = await User.findAll({
-      where: {
-        isLogged: true,
-      },
-    });
-    // console.log("online ", onlineUsers);
-    onlineUsers = onlineUsers.map((user: any) => {
+    let allUsers: any = await User.findAll();
+    // console.log("all ", allUsers);
+    allUsers = allUsers.map((user: any) => {
       const {
         id,
         isLogged,
@@ -110,8 +106,8 @@ export async function getOnlineUsers(req: any, res: any) {
         username,
       };
     });
-    res.status(200).json(onlineUsers);
+    res.status(200).json(allUsers);
   } catch (error) {
-    res.status(400).json("Error get online users out");
+    res.status(400).json("Error get all users out");
   }
 }

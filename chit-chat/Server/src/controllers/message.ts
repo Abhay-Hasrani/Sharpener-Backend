@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import Message from "../models/Message";
 
 export async function addMessageHandler(req: any, res: any) {
@@ -20,10 +21,26 @@ export async function addMessageHandler(req: any, res: any) {
 export async function getMessages(req: any, res: any) {
   try {
     const { receiverId } = req.body;
-    const sentMessages = await req.user.getMessages({ where: { receiverId } });
+    let lastMessageId: number = +req.params.lastMessageId; //converting to number using +
+    if (!lastMessageId) lastMessageId = 0;
+    const sentMessages: any = await Message.findAll({
+      where: {
+        userId: req.user.id,
+        receiverId: receiverId,
+        id: {
+          [Op.gt]: lastMessageId,
+        },
+      },
+    });
     // console.log("sent ", sentMessages);
     const receivedMessages: any = await Message.findAll({
-      where: { receiverId: req.user.id, userId: receiverId },
+      where: {
+        userId: receiverId,
+        receiverId: req.user.id,
+        id: {
+          [Op.gt]: lastMessageId,
+        },
+      },
     });
     // console.log("received ", receivedMessages);
     res.status(200).json({ sentMessages, receivedMessages });

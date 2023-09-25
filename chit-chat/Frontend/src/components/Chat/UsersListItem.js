@@ -11,11 +11,16 @@
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../store/UsersReducer";
 import { getReceiverMessages } from "../store/MessagesReducer";
+import { messageDateFormat } from "../../utils/dateUtil";
 
 const UsersListItem = (props) => {
+  const dispatch = useDispatch();
   const receiver = useSelector((state) => state.users.receiver);
   const isActive = receiver && props.id === receiver.id;
-  const dispatch = useDispatch();
+  const isLogged = props.isLogged;
+  let lastSeen = null;
+  if (!isLogged) lastSeen = messageDateFormat(props.updatedAt);
+  else lastSeen = "Online";
 
   async function userListItemClickHandler() {
     dispatch(userActions.setReceiver(props.id));
@@ -39,9 +44,11 @@ const UsersListItem = (props) => {
         <div className="status">
           {" "}
           <i
-            className={"fa fa-circle " + (props.status ? "online" : "online")}
+            className={"fa fa-circle " + (isLogged ? "online" : "offline")}
           ></i>
-          {" " + (props.lastSeen || "Online")}
+          {" " + lastSeen}
+          {/* {" " + (props.lastSeen || "lasts")} */}
+          {/* {" " + (isLogged ? "online" : "offline")} */}
         </div>
       </div>
     </li>

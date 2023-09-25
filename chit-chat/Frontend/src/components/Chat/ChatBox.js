@@ -2,19 +2,20 @@ import "./ChatBox.css";
 import UsersListItem from "./UsersListItem";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { getOnlineUsers } from "../store/UsersReducer";
+import { getAllUsers } from "../store/UsersReducer";
 import Chat from "./Chat";
 const ChatBox = () => {
   const dispatch = useDispatch();
-  const onlineUsers = useSelector((state) => state.users.onlineUsers);
+  const allUsers = useSelector((state) => state.users.allUsers);
   const receiver = useSelector((state) => state.users.receiver);
-  const onlineUserList = onlineUsers.map((item, index) => (
+  const allUserList = allUsers.map((item, index) => (
     <UsersListItem key={index} {...item} />
   ));
 
   useEffect(() => {
+    dispatch(getAllUsers());
     const intervalId = setInterval(() => {
-      dispatch(getOnlineUsers());
+      // dispatch(getAllUsers());
     }, 1000);
     return () => {
       clearInterval(intervalId);
@@ -39,7 +40,7 @@ const ChatBox = () => {
                 />
               </div>
               <ul className="list-unstyled chat-list mt-2 mb-0">
-                {onlineUserList}
+                {allUserList}
               </ul>
             </div>
             {receiver && <Chat />}

@@ -5,21 +5,21 @@ import { messageDateFormat } from "../../utils/dateUtil";
  * It is a Message Item in message/chat box
  * it takes below props
  * @param {string} messageText - The message text.
- * @param {boolean} sentByOther - If message sent by user then false;
- * @param {string} profilePhotoUrl - (Optional) If sentByOther is true you can set the profile url also;
+ * @param {boolean} sentToUs - If message sent by user then false;
+ * @param {string} profilePhotoUrl - (Optional) If sentToUs is true you can set the profile url also;
  * @returns Customized Message Item
  */
 const MessageItem = (props) => {
   const currentUser = useSelector((state) => state.users.user);
-  const sentByOther = props.receiverId === currentUser.id;
+  const sentToUs = props.receiverId === currentUser.id;
   const formattedDate = messageDateFormat(props.createdAt);
   return (
     <li className="clearfix">
-      <div className={"message-data " + (sentByOther && "message-data-other")}>
+      <div className={"message-data " + (sentToUs && "message-data-other")}>
         <span className="message-data-time">
           {formattedDate}
         </span>
-        {sentByOther && (
+        {sentToUs && (
           <img
             src={
               props.profilePhotoUrl ||
@@ -32,7 +32,7 @@ const MessageItem = (props) => {
       <div
         className={
           "message " +
-          (sentByOther ? "other-message float-right" : "my-message")
+          (sentToUs ? "other-message float-right" : "my-message")
         }
       >
         {props.messageText || "Some dummy weird message"}

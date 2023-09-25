@@ -7,6 +7,6 @@ const router = Router();
 // router.use("/", authenticateToken);
 router.post("/add-message",authenticateToken, addMessageHandler);
 
-router.post("/get-messages",authenticateToken, getMessages);
+router.post("/get-messages/:lastMessageId",authenticateToken, getMessages);
 
 export default router;

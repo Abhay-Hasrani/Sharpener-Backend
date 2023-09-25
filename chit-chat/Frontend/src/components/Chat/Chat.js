@@ -16,8 +16,9 @@ const Chat = () => {
   ));
 
   useEffect(() => {
+    if (receiver) dispatch(getReceiverMessages());
     const intervalId = setInterval(() => {
-      if (receiver) dispatch(getReceiverMessages());
+      // if (receiver) dispatch(getReceiverMessages());
     }, 1000);
     return () => {
       clearInterval(intervalId);
@@ -34,10 +35,12 @@ const Chat = () => {
       const result = await axios.post(addMessageUrl, userData);
       // console.log(result.data);
       const newMessage = result.data;
-      dispatch(messageActions.addMessage(newMessage));
+      dispatch(
+        messageActions.addMessage({ newMessage, receiverId: receiver.id })
+      );
       e.target.reset();
     } catch (error) {
-      console.log(error.data);
+      console.log(error);
     }
   }
   return (

@@ -29,7 +29,10 @@ function App() {
     try {
       const result = await axios.get(authLogOutUrl);
       console.log(result.data);
-      localStorage.clear();
+      // localStorage.clear();
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("receiver");
       setIsLogged(false);
     } catch (error) {
       console.log(error);

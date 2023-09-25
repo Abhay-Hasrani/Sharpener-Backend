@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { authOnlineUsersUrl } from "../../utils/myUrls";
+import { authAllUsersUrl } from "../../utils/myUrls";
 
 const initialState = {
-  onlineUsers: [],
+  allUsers: [],
   user: JSON.parse(localStorage.getItem("user")) || {},
   receiver: JSON.parse(localStorage.getItem("receiver")) || null,
 };
@@ -11,12 +11,12 @@ const UserSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
-    setOnlineUsers(state, action) {
-      state.onlineUsers = action.payload;
+    setAllUsers(state, action) {
+      state.allUsers = action.payload;
     },
     setReceiver(state, action) {
       const id = action.payload;
-      const currentReceiver = state.onlineUsers.find((item) => item.id === id);
+      const currentReceiver = state.allUsers.find((item) => item.id === id);
       localStorage.setItem("receiver", JSON.stringify(currentReceiver));
       state.receiver = currentReceiver;
     },
@@ -28,11 +28,11 @@ const UserSlice = createSlice({
   },
 });
 
-export function getOnlineUsers() {
+export function getAllUsers() {
   return async (dispatch) => {
-    const result = await axios.get(authOnlineUsersUrl);
-    const onlineUsers = result.data;
-    dispatch(userActions.setOnlineUsers(onlineUsers));
+    const result = await axios.get(authAllUsersUrl);
+    const allUsers = result.data;
+    dispatch(userActions.setAllUsers(allUsers));
   };
 }
 export const userActions = UserSlice.actions;
