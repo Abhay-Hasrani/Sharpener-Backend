@@ -13,7 +13,12 @@ const ChatBox = () => {
   ));
 
   useEffect(() => {
-    dispatch(getOnlineUsers());
+    const intervalId = setInterval(() => {
+      dispatch(getOnlineUsers());
+    }, 1000);
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [dispatch]);
   return (
     <div className="container">

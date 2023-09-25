@@ -16,8 +16,13 @@ const Chat = () => {
   ));
 
   useEffect(() => {
-    if (receiver) dispatch(getReceiverMessages());
-  }, [dispatch,receiver]);
+    const intervalId = setInterval(() => {
+      if (receiver) dispatch(getReceiverMessages());
+    }, 1000);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [dispatch, receiver]);
 
   async function sendMessageFormHandler(e) {
     e.preventDefault();
@@ -30,6 +35,7 @@ const Chat = () => {
       // console.log(result.data);
       const newMessage = result.data;
       dispatch(messageActions.addMessage(newMessage));
+      e.target.reset();
     } catch (error) {
       console.log(error.data);
     }

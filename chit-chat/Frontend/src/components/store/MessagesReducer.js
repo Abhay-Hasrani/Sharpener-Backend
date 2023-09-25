@@ -22,7 +22,14 @@ const MessageSlice = createSlice({
 });
 
 export function getReceiverMessages(receiverId) {
-  if (!receiverId) receiverId = JSON.parse(localStorage.getItem("receiver")).id;
+  if (!receiverId) {
+    const inLocalStorage = localStorage.getItem("receiver");
+    if (!inLocalStorage) {
+      const localStorageUserId = JSON.parse(localStorage.getItem("user")).id;
+      localStorage.setItem("receiver", localStorageUserId);
+    }
+    receiverId = JSON.parse(localStorage.getItem("receiver")).id;
+  }
   return async (dispatch) => {
     const result = await axios.post(getMessagesUrl, { receiverId });
     // console.log(result.data);
