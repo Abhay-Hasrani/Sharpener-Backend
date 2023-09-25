@@ -12,8 +12,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../store/UsersReducer";
 import { getReceiverMessages } from "../store/MessagesReducer";
 import { messageDateFormat } from "../../utils/dateUtil";
+import { useState } from "react";
 
 const UsersListItem = (props) => {
+  const [isSelected, setSelected] = useState(false);
   const dispatch = useDispatch();
   const receiver = useSelector((state) => state.users.receiver);
   const isActive = receiver && props.id === receiver.id;
@@ -27,10 +29,22 @@ const UsersListItem = (props) => {
     dispatch(getReceiverMessages(props.id));
   }
 
+  const isUsingForSelection = props.usingForSelection;
+  function usingForSelection() {
+    props.usingForSelection(props.id);
+    setSelected(!isSelected);
+  }
+
   return (
     <li
-      onClick={userListItemClickHandler}
-      className={"clearfix " + (isActive && "active")}
+      onClick={
+        isUsingForSelection ? usingForSelection : userListItemClickHandler
+      }
+      className={
+        "clearfix " +
+        (isActive && "active") +
+        (isUsingForSelection && isSelected && " bg-success-subtle")
+      }
     >
       <img
         src={

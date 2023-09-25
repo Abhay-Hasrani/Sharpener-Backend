@@ -32,7 +32,8 @@ function addToLocalStorage(messagesWithReceiverIdKey, messagesArr) {
 }
 
 function createLocalKeyForChatMessages(receiverId) {
-  return "chatMessagesWithReceiver_ID=" + receiverId;
+  const userId = JSON.parse(localStorage.getItem("user")).id;
+  return "chatMessagesWithReceiver_ID=" + receiverId + "User_ID=" + userId;
 }
 
 const initialState = { messages: [] };
@@ -90,7 +91,7 @@ export function getReceiverMessages(receiverId) {
   if (!receiverId) {
     const inLocalStorage = localStorage.getItem("receiver");
     if (!inLocalStorage) {
-      const localStorageUser = JSON.parse(localStorage.getItem("user"));
+      const localStorageUser = localStorage.getItem("user");
       localStorage.setItem("receiver", localStorageUser);
     }
     receiverId = JSON.parse(localStorage.getItem("receiver")).id;

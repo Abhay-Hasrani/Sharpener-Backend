@@ -1,3 +1,16 @@
 .navbar{
     background-color: wheat !important;
 }
+.nav-link{
+    font-size: large;
+    color: green;
+    font-weight: 700;
+}
+.nav-link:hover{
+    background-color: transparent;
+    font-weight: bold;
+    text-decoration: underline;
+}
+.nav-link.active{
+    text-decoration: underline;
+}

@@ -14,6 +14,7 @@ function App() {
   const [isLogged, setIsLogged] = useState(
     localStorage.getItem("token") !== null
   );
+
   if (isLogged)
     axios.defaults.headers.common["AuthenticationToken"] =
       localStorage.getItem("token");

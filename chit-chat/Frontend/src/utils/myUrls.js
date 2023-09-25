@@ -14,3 +14,6 @@ export const addMessageUrl = messageBaseUrl + "/add-message";
  * but NOTE ADD IT NO MATTER!!!
  */
 export const getMessagesUrl = messageBaseUrl + "/get-messages";
+
+const groupBaseUrl = baseUrl + "/group";
+export const createGroupUrl = groupBaseUrl + "/create-group";
