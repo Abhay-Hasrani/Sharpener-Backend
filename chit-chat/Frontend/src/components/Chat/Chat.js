@@ -59,6 +59,7 @@ const Chat = () => {
             className="form-control"
             placeholder="Enter text here..."
             name="messageText"
+            autoComplete="off"
           />
           <SendButton type={"submit"} />
         </form>

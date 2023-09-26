@@ -13,18 +13,24 @@ import { userActions } from "../store/UsersReducer";
 import { getReceiverMessages } from "../store/MessagesReducer";
 import { messageDateFormat } from "../../utils/dateUtil";
 import { useState } from "react";
+import { groupActions } from "../store/GroupsReducer";
 
 const UsersListItem = (props) => {
   const [isSelected, setSelected] = useState(false);
   const dispatch = useDispatch();
   const receiver = useSelector((state) => state.users.receiver);
-  const isActive = receiver && props.id === receiver.id;
+  const isGroupInFocus = useSelector((state) => state.groups.isGroupInFocus);
+
+  const isActive = !isGroupInFocus && receiver && props.id === receiver.id;
+  const userName = props.username;
   const isLogged = props.isLogged;
+
   let lastSeen = null;
   if (!isLogged) lastSeen = messageDateFormat(props.updatedAt);
   else lastSeen = "Online";
 
   async function userListItemClickHandler() {
+    dispatch(groupActions.setIsGroupInFocus(false));
     dispatch(userActions.setReceiver(props.id));
     dispatch(getReceiverMessages(props.id));
   }
@@ -42,8 +48,8 @@ const UsersListItem = (props) => {
       }
       className={
         "clearfix " +
-        (isActive && "active") +
-        (isUsingForSelection && isSelected && " bg-success-subtle")
+        (isActive && " active ") +
+        (isUsingForSelection && isSelected && " bg-success-subtle ")
       }
     >
       <img
@@ -54,7 +60,7 @@ const UsersListItem = (props) => {
         alt="avatar"
       />
       <div className="about">
-        <div className="name">{props.username || "Aiden Chavez"}</div>
+        <div className="name">{userName || "Aiden Chavez"}</div>
         <div className="status">
           {" "}
           <i

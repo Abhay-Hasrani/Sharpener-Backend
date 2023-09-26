@@ -17,3 +17,7 @@ export const getMessagesUrl = messageBaseUrl + "/get-messages";
 
 const groupBaseUrl = baseUrl + "/group";
 export const createGroupUrl = groupBaseUrl + "/create-group";
+export const getAllGroupsUrl = groupBaseUrl + "/all-groups";
+export const makeAdminsGroupsUrl = groupBaseUrl + "//make-admins";
+export const addUsersGroupsUrl = groupBaseUrl + "/add-users";
+export const removeUsersGroupsUrl = groupBaseUrl + "//remove-users";

@@ -1,7 +1,7 @@
 import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import "./Header.css";
 import { useState } from "react";
-import CreateGroupModel from "../UI/CreateGroupModel";
+import GroupModel from "../Chat/group/GroupModel";
 const Header = (props) => {
   const [showGroupModal, setShowGroupModal] = useState(false);
   function toggleModalVisibility() {
@@ -36,7 +36,8 @@ const Header = (props) => {
           </Nav>
         </Container>
       </Navbar>
-      <CreateGroupModel
+      <GroupModel
+        forCreating
         modalVisibility={showGroupModal}
         toggleModalVisibility={toggleModalVisibility}
       />

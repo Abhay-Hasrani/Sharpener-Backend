@@ -17,7 +17,7 @@
 }
 
 .group-name-input:focus,
-input:hover {
+.group-name-input:hover {
   outline: none;
   padding: 0.2rem 1rem;
   border-radius: 1rem;

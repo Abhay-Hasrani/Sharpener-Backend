@@ -113,7 +113,7 @@ export function getReceiverMessages(receiverId) {
     });
     const { sentMessages, receivedMessages } = result.data;
     const newDataFlag = sentMessages.length > 0 || receivedMessages.length > 0;
-    console.log(result.data);
+    // console.log(result.data);
     // newDataFlag means new messages are present
     dispatch(
       messageActions.setMessages({

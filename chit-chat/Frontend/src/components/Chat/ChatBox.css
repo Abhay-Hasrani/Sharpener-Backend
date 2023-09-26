@@ -253,14 +253,21 @@
   }
 }
 
-@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) and (-webkit-min-device-pixel-ratio: 1) {
+@media only screen and (min-device-width: 768px) {
+  /* and (max-device-width: 1024px) and (orientation: landscape) and (-webkit-min-device-pixel-ratio: 1)  */
   .chat-app .chat-list {
     height: 480px;
     overflow-x: auto;
   }
+  .chat-list::-webkit-scrollbar {
+    width: 0; /* Set the width of the scrollbar */
+  }
   .chat-app .chat-history {
     height: calc(100vh - 350px);
     overflow-x: auto;
+  }
+  .chat-history::-webkit-scrollbar {
+    width: 0; /* Set the width of the scrollbar */
   }
 }
 .input-group {
@@ -268,4 +275,13 @@
 }
 .input-group-text {
   font-size: 1.5rem;
+}
+.p-group-usernames {
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 9rem;
+  text-overflow: ellipsis;
+}
+.p-group-usernames.expand {
+  max-width: 15rem;
 }

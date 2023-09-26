@@ -19,6 +19,7 @@ const AuthForm = (props) => {
           className="auth-input"
           type="email"
           name="email"
+          autoFocus
           required
         />
         {!toggleLogIn && (
