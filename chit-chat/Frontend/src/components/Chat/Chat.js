@@ -5,18 +5,23 @@ import { useEffect } from "react";
 import { getReceiverMessages, messageActions } from "../store/MessagesReducer";
 import SendButton from "../UI/SendButton";
 import axios from "axios";
-import { addMessageUrl } from "../../utils/myUrls";
+import { addGroupMessageUrl, addMessageUrl } from "../../utils/myUrls";
 
 const Chat = () => {
   const dispatch = useDispatch();
   const messages = useSelector((state) => state.messages.messages);
   const receiver = useSelector((state) => state.users.receiver);
+  const isGroupInFocus = useSelector((state) => state.groups.isGroupInFocus);
+  const group = useSelector((state) => state.groups.group);
+
   const messageItemList = messages.map((item, index) => (
     <MessageItem key={index} {...item} />
   ));
 
   useEffect(() => {
-    if (receiver) dispatch(getReceiverMessages());
+    // if (receiver)
+    dispatch(getReceiverMessages(isGroupInFocus));
+
     const intervalId = setInterval(() => {
       // if (receiver) dispatch(getReceiverMessages());
     }, 1000);
@@ -31,13 +36,28 @@ const Chat = () => {
     const userData = {};
     for (const [name, value] of formData.entries()) userData[name] = value;
     try {
+      let reqUrl = addMessageUrl;
       userData.receiverId = receiver.id;
-      const result = await axios.post(addMessageUrl, userData);
+      if (isGroupInFocus) {
+        userData.groupId = group.id;
+        reqUrl = addGroupMessageUrl;
+      }
+
+      const result = await axios.post(reqUrl, userData);
       // console.log(result.data);
       const newMessage = result.data;
-      dispatch(
-        messageActions.addMessage({ newMessage, receiverId: receiver.id })
-      );
+      if (!isGroupInFocus)
+        dispatch(
+          messageActions.addMessage({ newMessage, receiverId: receiver.id })
+        );
+      else
+        dispatch(
+          messageActions.addMessage({
+            newMessage,
+            groupId: group.id,
+            isGroupId: true,
+          })
+        );
       e.target.reset();
     } catch (error) {
       console.log(error);
@@ -60,6 +80,7 @@ const Chat = () => {
             placeholder="Enter text here..."
             name="messageText"
             autoComplete="off"
+            autoFocus
           />
           <SendButton type={"submit"} />
         </form>

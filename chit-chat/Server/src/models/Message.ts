@@ -12,8 +12,6 @@ const Message = database.define("messages", {
   },
   receiverId: {
     type: INTEGER,
-    allowNull: false,
-    defaultValue:1
   },
   messageText: {
     type: STRING,

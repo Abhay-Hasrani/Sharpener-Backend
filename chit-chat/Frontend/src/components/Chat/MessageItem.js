@@ -11,18 +11,18 @@ import { messageDateFormat } from "../../utils/dateUtil";
  */
 const MessageItem = (props) => {
   const currentUser = useSelector((state) => state.users.user);
-  const sentToUs = props.receiverId === currentUser.id;
+  const sentToUs = !(props.userId === currentUser.id);
   const formattedDate = messageDateFormat(props.createdAt);
+  const messageText = props.messageText;
+  const profilePhotoUrl = props.profilePhotoUrl;
   return (
     <li className="clearfix">
       <div className={"message-data " + (sentToUs && "message-data-other")}>
-        <span className="message-data-time">
-          {formattedDate}
-        </span>
+        <span className="message-data-time">{formattedDate}</span>
         {sentToUs && (
           <img
             src={
-              props.profilePhotoUrl ||
+              profilePhotoUrl ||
               "https://bootdey.com/img/Content/avatar/avatar7.png"
             }
             alt="avatar"
@@ -31,11 +31,10 @@ const MessageItem = (props) => {
       </div>
       <div
         className={
-          "message " +
-          (sentToUs ? "other-message float-right" : "my-message")
+          "message " + (sentToUs ? "other-message float-right" : "my-message")
         }
       >
-        {props.messageText || "Some dummy weird message"}
+        {messageText || "Some dummy weird message"}
       </div>
     </li>
   );

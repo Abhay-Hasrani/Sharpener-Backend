@@ -34,6 +34,8 @@ function App() {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       localStorage.removeItem("receiver");
+      localStorage.removeItem("group");
+      localStorage.removeItem("isGroupInFocus");
       setIsLogged(false);
     } catch (error) {
       console.log(error);

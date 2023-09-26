@@ -1,20 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getMessagesUrl } from "../../utils/myUrls";
+import { getGroupMessagesUrl, getMessagesUrl } from "../../utils/myUrls";
 import axios from "axios";
 /**
  *
- * @param {string} messagesWithReceiverIdKey //Key for storing in messages in localstorage
+ * @param {string} messagesWithChatIdKey //Key for storing in messages in localstorage
  * @param {ArrayOfObjects} messagesArr // new Message Objects Array
  * @returns Updated Message Objects Array
  */
-function addToLocalStorage(messagesWithReceiverIdKey, messagesArr) {
-  const currentMessages = localStorage.getItem(messagesWithReceiverIdKey);
+function addToLocalStorage(messagesWithChatIdKey, messagesArr) {
+  const currentMessages = localStorage.getItem(messagesWithChatIdKey);
   if (!currentMessages) {
     // if messages are empty just create new item
-    localStorage.setItem(
-      messagesWithReceiverIdKey,
-      JSON.stringify(messagesArr)
-    );
+    localStorage.setItem(messagesWithChatIdKey, JSON.stringify(messagesArr));
     return messagesArr;
   }
   //if present add messages Arr to current one
@@ -24,16 +21,15 @@ function addToLocalStorage(messagesWithReceiverIdKey, messagesArr) {
   //so remove oldest chat if size greater than 20
   const memoryLimit = 20;
   while (newMessagesArr.length > memoryLimit) newMessagesArr.shift();
-  localStorage.setItem(
-    messagesWithReceiverIdKey,
-    JSON.stringify(newMessagesArr)
-  );
+  localStorage.setItem(messagesWithChatIdKey, JSON.stringify(newMessagesArr));
   return newMessagesArr;
 }
 
-function createLocalKeyForChatMessages(receiverId) {
+function createLocalKeyForChatMessages(receiverId, isGroupId) {
   const userId = JSON.parse(localStorage.getItem("user")).id;
-  return "chatMessagesWithReceiver_ID=" + receiverId + "User_ID=" + userId;
+  return `chatMessagesWith${
+    isGroupId ? "Group" : "Receiver"
+  }_ID=${receiverId}User_ID=${userId}`;
 }
 
 const initialState = { messages: [] };
@@ -46,7 +42,7 @@ const MessageSlice = createSlice({
         sentMessages,
         receivedMessages,
         newDataFlag,
-        messagesWithReceiverIdKey,
+        messagesWithChatIdKey,
       } = action.payload;
       const messages = [...sentMessages, ...receivedMessages];
       messages.sort((a, b) => {
@@ -55,28 +51,28 @@ const MessageSlice = createSlice({
       let UpdatedMessagesArr = messages;
       //if newDataFlag is true means local storage cache is old/empty so fill it with new data
       if (newDataFlag) {
-        UpdatedMessagesArr = addToLocalStorage(
-          messagesWithReceiverIdKey,
-          messages
-        );
+        UpdatedMessagesArr = addToLocalStorage(messagesWithChatIdKey, messages);
       } else {
         //else restore old messages from local storage
         // to make sure they are not overridden in state
-        const chatMessages = localStorage.getItem(messagesWithReceiverIdKey);
+        const chatMessages = localStorage.getItem(messagesWithChatIdKey);
         if (chatMessages) UpdatedMessagesArr = JSON.parse(chatMessages);
         else {
           //just create an empty localStorage element as no messages are between both members
           //UpdatedMessagesArr is empty in this case
-          localStorage.setItem(messagesWithReceiverIdKey, UpdatedMessagesArr);
+          localStorage.setItem(messagesWithChatIdKey, UpdatedMessagesArr);
         }
       }
       state.messages = UpdatedMessagesArr;
     },
     addMessage(state, action) {
-      const { newMessage, receiverId } = action.payload;
-      const messagesWithReceiverIdKey =
-        createLocalKeyForChatMessages(receiverId);
-      const UpdatedMessagesArr = addToLocalStorage(messagesWithReceiverIdKey, [
+      const { newMessage, id, isGroupId } = action.payload;
+      if (!isGroupId) isGroupId = false;
+      const messagesWithChatIdKey = createLocalKeyForChatMessages(
+        id,
+        isGroupId
+      );
+      const UpdatedMessagesArr = addToLocalStorage(messagesWithChatIdKey, [
         newMessage,
       ]);
       state.messages = UpdatedMessagesArr;
@@ -85,22 +81,28 @@ const MessageSlice = createSlice({
   },
 });
 
-export function getReceiverMessages(receiverId) {
-  //below if case sets the receiver to current user on login
-  //  as no receiver box is currently active/clicked
-  if (!receiverId) {
+export function getReceiverMessages(isGroupId = false, id) {
+  //below if case handles refresh as state is reset and this function is called without id
+  //also it sets the receiver to current user on login
+  //as no receiver box is active/clicked on login
+  if (!id) {
     const inLocalStorage = localStorage.getItem("receiver");
     if (!inLocalStorage) {
       const localStorageUser = localStorage.getItem("user");
       localStorage.setItem("receiver", localStorageUser);
     }
-    receiverId = JSON.parse(localStorage.getItem("receiver")).id;
+    id = JSON.parse(localStorage.getItem("receiver")).id;
+  }
+
+  //checking same case as above for group but if isGroupId is true there will always be a group
+  if(isGroupId){
+    id = JSON.parse(localStorage.getItem("group")).id;
   }
 
   let lastMessageId = 0;
   //Now i will check if messages with receiver with id=receiver exist in localstorage
-  const messagesWithReceiverIdKey = createLocalKeyForChatMessages(receiverId);
-  const chatMessages = localStorage.getItem(messagesWithReceiverIdKey);
+  const messagesWithChatIdKey = createLocalKeyForChatMessages(id, isGroupId);
+  const chatMessages = localStorage.getItem(messagesWithChatIdKey);
   //if they exist find last message id between them which will be stored in last element
   if (chatMessages) {
     const chatMessagesArr = JSON.parse(chatMessages);
@@ -108,9 +110,17 @@ export function getReceiverMessages(receiverId) {
       lastMessageId = chatMessagesArr[chatMessagesArr.length - 1].id;
   }
   return async (dispatch) => {
-    const result = await axios.post(getMessagesUrl + "/" + lastMessageId, {
-      receiverId,
-    });
+    let reqBody = {
+      receiverId: id,
+    };
+    let reqUrl = getMessagesUrl;
+    if (isGroupId) {
+      reqBody = {
+        groupId: id,
+      };
+      reqUrl = getGroupMessagesUrl;
+    }
+    const result = await axios.post(reqUrl + "/" + lastMessageId, reqBody);
     const { sentMessages, receivedMessages } = result.data;
     const newDataFlag = sentMessages.length > 0 || receivedMessages.length > 0;
     // console.log(result.data);
@@ -120,7 +130,7 @@ export function getReceiverMessages(receiverId) {
         sentMessages,
         receivedMessages,
         newDataFlag,
-        messagesWithReceiverIdKey,
+        messagesWithChatIdKey,
       })
     );
   };
