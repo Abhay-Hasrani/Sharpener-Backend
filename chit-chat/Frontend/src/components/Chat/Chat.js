@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import ChatBoxHeader from "./ChatBoxHeader";
 import MessageItem from "./MessageItem";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   getReceiverMessages,
   messageActions,
@@ -10,10 +10,12 @@ import SendButton from "../UI/SendButton";
 import axios from "axios";
 import { addGroupMessageUrl, addMessageUrl } from "../../utils/myUrls";
 import useSocket from "../hooks/useSocket";
+import { CloseButton, OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const Chat = () => {
   const scrollToLastRef = useRef(null);
   const dispatch = useDispatch();
+  let [file, setFile] = useState(null);
   const socket = useSocket();
   const messages = useSelector((state) => state.messages.messages);
   const receiver = useSelector((state) => state.users.receiver);
@@ -68,8 +70,17 @@ const Chat = () => {
         userData.receiverId = receiver.id;
         reqUrl = addMessageUrl;
       }
-
-      const result = await axios.post(reqUrl, userData);
+      if (file) {
+        // console.log(file.name);
+        userData.userFile = file;
+        console.log(userData);
+      }
+      if (userData.messageText === "") return;
+      const result = await axios.post(reqUrl, userData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       // console.log(result.data);
       const newMessage = result.data;
       if (!isGroupInFocus)
@@ -83,9 +94,24 @@ const Chat = () => {
           })
         );
       e.target.reset();
+      setFile(null);
     } catch (error) {
       console.log(error);
     }
+  }
+  function fileUploadHandler() {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.click();
+    fileInput.addEventListener("change", (e) => {
+      const selectedFile = e.target.files[0]; // Get the first selected file
+      if (selectedFile) {
+        setFile(selectedFile);
+        console.log(`Selected file: ${selectedFile.name}`);
+      } else {
+        console.log("No file selected.");
+      }
+    });
   }
   return (
     <div className="chat">
@@ -97,7 +123,23 @@ const Chat = () => {
         </ul>
       </div>
       <div className="chat-message clearfix">
-        <form className="input-group mb-0" onSubmit={sendMessageFormHandler}>
+        <form
+          className="input-group mb-0"
+          onSubmit={sendMessageFormHandler}
+          encType="multipart/form-data"
+        >
+          <OverlayTrigger
+            placement="top"
+            overlay={<Tooltip id="tooltip">Click to share files!</Tooltip>}
+          >
+            <button
+              type="button"
+              onClick={fileUploadHandler}
+              className="btn btn-primary m-1"
+            >
+              <i className="fa-solid fa-file-export"></i>
+            </button>
+          </OverlayTrigger>
           <input
             type="text"
             className="form-control"
@@ -106,8 +148,14 @@ const Chat = () => {
             autoComplete="off"
             autoFocus
           />
-          <SendButton type={"submit"} />
+          <SendButton type="submit" />
         </form>
+        {file && (
+          <>
+            <span className="fw-bold fs-10 me-1">{file.name}</span>
+            <CloseButton onClick={() => setFile(null)} />
+          </>
+        )}
       </div>
     </div>
   );

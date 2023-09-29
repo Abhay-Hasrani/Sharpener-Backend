@@ -6,7 +6,8 @@ dotenv.config();
 import path from "path";
 import http from "http";
 import { Server } from "socket.io";
-
+//below import is neccesary to configure multer before using it from serives folder
+import upload from "./services/multer_AWS_S3";
 //database instance
 import database from "./db/database";
 

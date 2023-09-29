@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import GroupModel from "./group/GroupModel";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 /**
  * Chat Box Header
@@ -72,45 +73,62 @@ const ChatBoxHeader = (props) => {
           </div>
         </div>
         <div className="col-lg-6 hidden-sm text-right">
-          <button className="btn btn-outline-secondary m-1">
+          {/* <button className="btn btn-outline-secondary m-1">
             <i className="fa fa-camera"></i>
           </button>
           <button className="btn btn-outline-primary m-1">
             <i className="fa fa-image"></i>
-          </button>
-          {/* <button className="btn btn-outline-info m-1">
+          </button> 
+          <button className="btn btn-outline-info m-1">
             <i className="fa-solid fa-circle-info"></i>
           </button> */}
           {isGroupInFocus && (
             <>
-              <button
-                onClick={addToGroupHandler}
-                className="btn btn-outline-success m-1"
+              <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip id="tooltip">Click to add members!</Tooltip>}
               >
-                <i className="fa-solid fa-user-plus" />
-              </button>
+                <button
+                  onClick={addToGroupHandler}
+                  className="btn btn-outline-success m-1"
+                >
+                  <i className="fa-solid fa-user-plus" />
+                </button>
+              </OverlayTrigger>
               <GroupModel
                 forAdding
                 modalVisibility={showAddModal}
                 toggleModalVisibility={toggleAddModal}
               />
-              <button
-                onClick={removeFromGroupHandler}
-                className="btn btn-outline-danger m-1"
+              <OverlayTrigger
+                placement="top"
+                overlay={
+                  <Tooltip id="tooltip">Click to remove members!</Tooltip>
+                }
               >
-                <i className="fa-solid fa-user-minus" />
-              </button>
+                <button
+                  onClick={removeFromGroupHandler}
+                  className="btn btn-outline-danger m-1"
+                >
+                  <i className="fa-solid fa-user-minus" />
+                </button>
+              </OverlayTrigger>
               <GroupModel
                 forRemoving
                 modalVisibility={showRemoveModal}
                 toggleModalVisibility={toggleRemoveModal}
               />
-              <button
-                onClick={makeGroupAdminHandler}
-                className="btn btn-outline-info m-1"
+              <OverlayTrigger
+                placement="right"
+                overlay={<Tooltip id="tooltip">Click to make admins!</Tooltip>}
               >
-                <i className="fa fa-cogs"></i>
-              </button>
+                <button
+                  onClick={makeGroupAdminHandler}
+                  className="btn btn-outline-info m-1"
+                >
+                  <i className="fa fa-cogs"></i>
+                </button>
+              </OverlayTrigger>
               <GroupModel
                 forAdmin
                 modalVisibility={showAdminModal}

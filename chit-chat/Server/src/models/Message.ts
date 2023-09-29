@@ -1,7 +1,7 @@
 import database from "../db/database";
 import { BOOLEAN } from "sequelize";
 import { INTEGER } from "sequelize";
-import { STRING } from "sequelize";
+import { STRING, TEXT } from "sequelize";
 
 const Message = database.define("messages", {
   id: {
@@ -16,6 +16,12 @@ const Message = database.define("messages", {
   messageText: {
     type: STRING,
     allowNull: false,
+  },
+  fileName: {
+    type: TEXT,
+  },
+  fileUrl: {
+    type: TEXT,
   },
 });
 

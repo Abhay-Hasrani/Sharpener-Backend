@@ -14,7 +14,21 @@ const MessageItem = (props) => {
   const sentToUs = !(props.userId === currentUser.id);
   const formattedDate = messageDateFormat(props.createdAt);
   const messageText = props.messageText;
+  // const fileUrl =
+  //   "https://expensetrackerabhay.s3.amazonaws.com/Expense-Abhay+Hasrani-Sun+Sep+10+2023+21%3A58%3A04+GMT%2B0530+(India+Standard+Time).txt";
+  const fileUrl = props.fileUrl;
+  const fileName = props.fileName;
   const profilePhotoUrl = props.profilePhotoUrl;
+  function createDownloadLink(fileUrl) {
+    return (
+      <>
+        <a href={fileUrl} download={fileName} className="fs-2 ">
+          <i className="fa fa-download" />
+        </a>
+        <p className="fw-bolder">{fileName}</p>
+      </>
+    );
+  }
   return (
     <li className="clearfix">
       <div className={"message-data " + (sentToUs && "message-data-other")}>
@@ -34,6 +48,7 @@ const MessageItem = (props) => {
           "message " + (sentToUs ? "other-message float-right" : "my-message")
         }
       >
+        {fileUrl && createDownloadLink(fileUrl)}
         {messageText || "Some dummy weird message"}
       </div>
     </li>
