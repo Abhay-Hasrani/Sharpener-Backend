@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { getAllGroupsUrl } from "../../utils/myUrls";
+import { getAllGroupsUrl } from "../../../utils/myUrls";
 
 //isGroupInFocus is variable that tells application that currently a group chat is opened
 //  and based on this the chatHeader, MessageReducer, setting work

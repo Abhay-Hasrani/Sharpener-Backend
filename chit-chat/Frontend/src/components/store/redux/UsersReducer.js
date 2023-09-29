@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { authAllUsersUrl } from "../../utils/myUrls";
+import { authAllUsersUrl } from "../../../utils/myUrls";
 
 const initialState = {
   allUsers: [],
-  user: JSON.parse(localStorage.getItem("user")) || {},
+  user: JSON.parse(localStorage.getItem("user")) || null,
   receiver: JSON.parse(localStorage.getItem("receiver")) || null,
 };
 const UserSlice = createSlice({

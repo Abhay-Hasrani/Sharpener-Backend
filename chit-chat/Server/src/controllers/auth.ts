@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import User from "../models/User";
 import jwt from "jsonwebtoken";
+import { io } from "../app";
 
 export function authSignUpHanlder(req: any, res: any) {
   const {
@@ -59,6 +60,8 @@ export async function authLogInHanlder(req: any, res: any) {
             token: generateAccessToken(user.id),
             message: "User Logged In successfully",
           });
+          //alert for new user joined
+          io.emit("user joined", updatedUser.username + " is here");
         }
       } catch (err: any) {
         console.log(err.message);

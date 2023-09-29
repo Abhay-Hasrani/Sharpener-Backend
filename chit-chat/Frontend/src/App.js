@@ -1,15 +1,22 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Auth from "./components/auth/Auth";
-import ChatBox from "./components/Chat/ChatBox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import ChatBox from "./components/Chat/ChatBox";
 import Header from "./components/Header/Header";
 import { authLogOutUrl } from "./utils/myUrls";
 import { useDispatch } from "react-redux";
-import { userActions } from "./components/store/UsersReducer";
+import { userActions } from "./components/store/redux/UsersReducer";
+import useSocket from "./components/hooks/useSocket";
 
 function App() {
+  const socket = useSocket();
+  useEffect(() => {
+    return () => {
+      if (socket) socket.disconnect();
+    };
+  }, [socket]);
   const dispatch = useDispatch();
   const [isLogged, setIsLogged] = useState(
     localStorage.getItem("token") !== null

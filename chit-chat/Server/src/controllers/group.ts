@@ -4,6 +4,8 @@ import Group from "../models/Group";
 import GroupUser from "../models/GroupUser";
 import User from "../models/User";
 import { Identifier } from "sequelize";
+import { io } from "../app";
+import { makeUniqueRoomId } from "../utils/helper";
 
 export async function createGroup(req: any, res: any) {
   const transaction = await database.transaction();
@@ -30,6 +32,15 @@ export async function createGroup(req: any, res: any) {
     const groupMembers = await newGroup.setUsers(groupUsers, { transaction });
 
     res.status(200).json(groupMembers);
+    //alert all members about new group
+    const roomIds = groupUsers.map((id) =>
+      makeUniqueRoomId(id as number, false)
+    );
+    console.log(roomIds);
+    io.to(roomIds).emit(
+      "new-group",
+      `you were added to ${groupName} by ${req.user.username}`
+    );
     await transaction.commit();
   } catch (error: any) {
     await transaction.rollback();

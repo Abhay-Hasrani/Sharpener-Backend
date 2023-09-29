@@ -19,15 +19,20 @@ const ChatBoxHeader = (props) => {
   const group = useSelector((state) => state.groups.group);
   const user = useSelector((state) => state.users.user);
 
-  let isAdmin = false;
-  let userName = receiver.username;
-  let profilePhotoUrl = receiver.profilePhotoUrl;
-  let userNameString = null;
+  let isAdmin;
+  let userName;
+  let profilePhotoUrl;
+  let userNameString;
   if (group && isGroupInFocus) {
     isAdmin = group.users.find((item) => item.id === user.id).isAdmin;
     userName = group.groupName;
     profilePhotoUrl = group.profilePhotoUrl;
     userNameString = group.users.map((item) => item.username).join(", ");
+  } else if (receiver && !isGroupInFocus) {
+    isAdmin = false;
+    userName = receiver.username;
+    profilePhotoUrl = receiver.profilePhotoUrl;
+    userNameString = null;
   }
 
   function addToGroupHandler() {

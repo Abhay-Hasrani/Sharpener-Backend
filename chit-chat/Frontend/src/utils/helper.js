@@ -1,4 +1,4 @@
-export function searchPatternMatch(matchThis,toThis) {
+export function searchPatternMatch(matchThis, toThis) {
   if (matchThis === "") return true;
   else {
     // 'i' is for case insensitive
@@ -6,4 +6,8 @@ export function searchPatternMatch(matchThis,toThis) {
     // console.log(item.username.toLowerCase().match(pattern));
     return toThis.toLowerCase().match(pattern);
   }
+}
+
+export function makeUniqueRoomId(id, isGroupId) {
+  return `${isGroupId ? "Group_" : "User_"}${id}`;
 }

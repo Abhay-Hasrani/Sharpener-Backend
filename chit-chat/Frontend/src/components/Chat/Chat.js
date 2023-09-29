@@ -1,14 +1,20 @@
 import { useDispatch, useSelector } from "react-redux";
 import ChatBoxHeader from "./ChatBoxHeader";
 import MessageItem from "./MessageItem";
-import { useEffect } from "react";
-import { getReceiverMessages, messageActions } from "../store/MessagesReducer";
+import { useEffect, useRef } from "react";
+import {
+  getReceiverMessages,
+  messageActions,
+} from "../store/redux/MessagesReducer";
 import SendButton from "../UI/SendButton";
 import axios from "axios";
 import { addGroupMessageUrl, addMessageUrl } from "../../utils/myUrls";
+import useSocket from "../hooks/useSocket";
 
 const Chat = () => {
+  const scrollToLastRef = useRef(null);
   const dispatch = useDispatch();
+  const socket = useSocket();
   const messages = useSelector((state) => state.messages.messages);
   const receiver = useSelector((state) => state.users.receiver);
   const isGroupInFocus = useSelector((state) => state.groups.isGroupInFocus);
@@ -19,16 +25,34 @@ const Chat = () => {
   ));
 
   useEffect(() => {
-    // if (receiver)
-    dispatch(getReceiverMessages(isGroupInFocus));
+    function scrollToLastItem() {
+      if (scrollToLastRef.current) {
+        const list = scrollToLastRef.current;
+        const lastItem = list.lastChild;
+        lastItem && lastItem.scrollIntoView({ behavior: "smooth" }); // You can use 'auto' for immediate scroll
+      }
+    }
 
-    const intervalId = setInterval(() => {
-      // if (receiver) dispatch(getReceiverMessages());
-    }, 1000);
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [dispatch, receiver]);
+    scrollToLastItem();
+  }, [messages]);
+
+  useEffect(() => {
+    // const intervalId = setInterval(() => {
+    dispatch(getReceiverMessages(isGroupInFocus));
+    // }, 1000);
+    // return () => {
+    //   clearInterval(intervalId);
+    // };
+  }, [dispatch, isGroupInFocus]);
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("new-message", (userObj) => {
+      console.log("message from", userObj);
+      dispatch(getReceiverMessages(isGroupInFocus));
+    });
+    socket.on("group-check", (msg) => console.log(msg));
+  }, [socket, isGroupInFocus, dispatch]);
 
   async function sendMessageFormHandler(e) {
     e.preventDefault();
@@ -36,25 +60,25 @@ const Chat = () => {
     const userData = {};
     for (const [name, value] of formData.entries()) userData[name] = value;
     try {
-      let reqUrl = addMessageUrl;
-      userData.receiverId = receiver.id;
+      let reqUrl;
       if (isGroupInFocus) {
         userData.groupId = group.id;
         reqUrl = addGroupMessageUrl;
+      } else {
+        userData.receiverId = receiver.id;
+        reqUrl = addMessageUrl;
       }
 
       const result = await axios.post(reqUrl, userData);
       // console.log(result.data);
       const newMessage = result.data;
       if (!isGroupInFocus)
-        dispatch(
-          messageActions.addMessage({ newMessage, receiverId: receiver.id })
-        );
+        dispatch(messageActions.addMessage({ newMessage, id: receiver.id }));
       else
         dispatch(
           messageActions.addMessage({
             newMessage,
-            groupId: group.id,
+            id: group.id,
             isGroupId: true,
           })
         );
@@ -67,7 +91,7 @@ const Chat = () => {
     <div className="chat">
       <ChatBoxHeader />
       <div className="chat-history">
-        <ul className="m-b-0">
+        <ul ref={scrollToLastRef} className="m-b-0">
           {/* <MessageItem /> */}
           {messageItemList}
         </ul>

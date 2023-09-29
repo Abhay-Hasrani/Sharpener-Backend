@@ -1,9 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
-import { groupActions } from "../../store/GroupsReducer";
-import {
-  getReceiverMessages,
-  messageActions,
-} from "../../store/MessagesReducer";
+import { groupActions } from "../../store/redux/GroupsReducer";
+import { getReceiverMessages } from "../../store/redux/MessagesReducer";
 
 const GroupListItem = (props) => {
   const dispatch = useDispatch();
@@ -17,7 +14,7 @@ const GroupListItem = (props) => {
   function groupListItemClickHandler() {
     dispatch(groupActions.setIsGroupInFocus(true));
     dispatch(groupActions.setGroup(props.id));
-    dispatch(getReceiverMessages(true,props.id));
+    dispatch(getReceiverMessages(true, props.id));
   }
 
   const userNameString = props.users.map((item) => item.username).join(", ");

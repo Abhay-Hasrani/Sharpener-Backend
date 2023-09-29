@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getGroupMessagesUrl, getMessagesUrl } from "../../utils/myUrls";
+import { getGroupMessagesUrl, getMessagesUrl } from "../../../utils/myUrls";
 import axios from "axios";
 /**
  *
@@ -66,8 +66,9 @@ const MessageSlice = createSlice({
       state.messages = UpdatedMessagesArr;
     },
     addMessage(state, action) {
-      const { newMessage, id, isGroupId } = action.payload;
+      let { newMessage, id, isGroupId } = action.payload;
       if (!isGroupId) isGroupId = false;
+      // console.log(action.payload);
       const messagesWithChatIdKey = createLocalKeyForChatMessages(
         id,
         isGroupId
@@ -81,7 +82,15 @@ const MessageSlice = createSlice({
   },
 });
 
-export function getReceiverMessages(isGroupId = false, id) {
+/**
+ *
+ * @param {boolean} isGroupId this boolean parameter specifies if the messages to fetch are for group chat so id is for group chat
+ * @param {number} id (Optional) id of the receiver single or group ,
+ * if id not provided messages are fetched for active group or receiver ,
+ * if no active receiver or group just for messages with self
+ * @returns function for fetching messages from server dispatching a Message Action
+ */
+export function getReceiverMessages(isGroupId, id) {
   //below if case handles refresh as state is reset and this function is called without id
   //also it sets the receiver to current user on login
   //as no receiver box is active/clicked on login
@@ -95,7 +104,7 @@ export function getReceiverMessages(isGroupId = false, id) {
   }
 
   //checking same case as above for group but if isGroupId is true there will always be a group
-  if(isGroupId){
+  if (isGroupId) {
     id = JSON.parse(localStorage.getItem("group")).id;
   }
 

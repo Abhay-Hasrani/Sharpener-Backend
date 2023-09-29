@@ -4,7 +4,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 import path from "path";
-
+import http from "http";
+import { Server } from "socket.io";
 
 //database instance
 import database from "./db/database";
@@ -26,6 +27,29 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
+//configure socket.io
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:3000"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("connected with ===", socket.id);
+  const roomId = socket.handshake.query.roomId;
+  console.log("roomId is ", roomId);
+  socket.join(roomId as string);
+  io.on("disconnect", (socket) => {
+    console.log("disconnected with XXX", socket.id);
+  });
+  socket.on("join-group-room", (roomId, acknowledge) => {
+    socket.join(roomId);
+    // console.log("group roomId is ", roomId);
+    acknowledge("Joined group with roomId " + roomId);
+  });
+});
+
 app.use("/auth", authRoutes);
 app.use("/message", messageRoutes);
 app.use("/group", groupRoutes);
@@ -37,5 +61,7 @@ Group.belongsToMany(User, { through: GroupUser });
 
 database
   .sync()
-  .then(() => app.listen(process.env.PORT || 4000))
+  .then(() => server.listen(process.env.PORT || 4000))
   .catch((err) => console.log(err));
+
+export { io };

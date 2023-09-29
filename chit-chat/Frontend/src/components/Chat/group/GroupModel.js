@@ -10,7 +10,7 @@ import {
 } from "../../../utils/myUrls";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllGroups } from "../../store/GroupsReducer";
+import { getAllGroups } from "../../store/redux/GroupsReducer";
 const GroupModel = (props) => {
   const dispatch = useDispatch();
   const group = useSelector((state) => state.groups.group);

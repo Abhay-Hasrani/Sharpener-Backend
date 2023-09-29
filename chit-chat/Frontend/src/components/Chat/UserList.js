@@ -1,16 +1,28 @@
 import { useSelector } from "react-redux";
 import UsersListItem from "./UsersListItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GroupListItem from "./group/GroupListItem";
-import { searchPatternMatch } from "../../utils/helper";
+import { makeUniqueRoomId, searchPatternMatch } from "../../utils/helper";
+import useSocket from "../hooks/useSocket";
 
 const UserList = (props) => {
   const [filterText, setFilterText] = useState("");
+  const socket = useSocket();
   const allUsers = useSelector((state) => state.users.allUsers);
   const user = useSelector((state) => state.users.user);
   const allGroups = useSelector((state) => state.groups.allGroups);
   const group = useSelector((state) => state.groups.group);
   const isSelecting = props.usingForSelection ? true : false;
+
+  useEffect(() => {
+    allGroups.forEach((group) => {
+      socket.emit(
+        "join-group-room",
+        makeUniqueRoomId(group.id, true),
+        (acknowledge) => console.log(acknowledge)
+      );
+    });
+  }, [socket, allGroups]);
 
   const allUserList = allUsers
     .filter((item) => {

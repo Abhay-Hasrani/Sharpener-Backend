@@ -9,11 +9,11 @@
  */
 
 import { useDispatch, useSelector } from "react-redux";
-import { userActions } from "../store/UsersReducer";
-import { getReceiverMessages } from "../store/MessagesReducer";
+import { userActions } from "../store/redux/UsersReducer";
+import { getReceiverMessages } from "../store/redux/MessagesReducer";
 import { messageDateFormat } from "../../utils/dateUtil";
 import { useState } from "react";
-import { groupActions } from "../store/GroupsReducer";
+import { groupActions } from "../store/redux/GroupsReducer";
 
 const UsersListItem = (props) => {
   const [isSelected, setSelected] = useState(false);
@@ -32,7 +32,7 @@ const UsersListItem = (props) => {
   async function userListItemClickHandler() {
     dispatch(groupActions.setIsGroupInFocus(false));
     dispatch(userActions.setReceiver(props.id));
-    dispatch(getReceiverMessages(props.id));
+    dispatch(getReceiverMessages(false,props.id));
   }
 
   const isUsingForSelection = props.usingForSelection;
