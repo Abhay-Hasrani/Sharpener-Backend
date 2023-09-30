@@ -218,14 +218,14 @@
   height: 0;
 }
 
-@media only screen and (max-width: 100px) {
+@media only screen and (max-width: 768px) {
   .chat-app .people-list {
     height: 465px;
     width: 100%;
     overflow-x: auto;
     background: #fff;
-    left: -400px;
-    display: none;
+    top: 600px;
+    /* display: none; */
   }
   .chat-app .people-list.open {
     left: 0;

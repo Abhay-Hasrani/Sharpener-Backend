@@ -6,8 +6,9 @@ dotenv.config();
 import path from "path";
 import http from "http";
 import { Server } from "socket.io";
-//below import is neccesary to configure multer before using it from serives folder
+//below import is neccesary to configure multer before using it from services folder
 import upload from "./services/multer_AWS_S3";
+import initCronJobs from "./services/cronJobs";
 //database instance
 import database from "./db/database";
 
@@ -27,6 +28,9 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
+
+//initialize cronJobs 
+// initCronJobs();
 
 //configure socket.io
 const server = http.createServer(app);
