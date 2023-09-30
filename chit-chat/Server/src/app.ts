@@ -32,7 +32,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000"],
+    origin: [`http://${process.env.FRONTEND_IP}`],
   },
 });
 
