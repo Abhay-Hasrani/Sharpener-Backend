@@ -1,13 +1,12 @@
-const path = require("path");
+const mongoose = require("mongoose");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { v4: uuidv4 } = require("uuid");
 const ForgotPassword = require("../models/forgotPassword");
 
 /*imports for sib-api-v3-sdk api BREVO(previously SendInBlue)*/
 const SIB = require("sib-api-v3-sdk");
-const database = require("../db/database");
+
 const defaultClient = SIB.ApiClient.instance;
 const apiKey = defaultClient.authentications["api-key"];
 apiKey.apiKey = process.env.EMAIL_API_KEY;
@@ -29,11 +28,13 @@ exports.createUser = async (req, res, next) => {
     try {
       if (err) throw new Error("Error while generating hash");
       else if (hash) {
-        const newUser = await User.create({
-          username,
-          email,
-          password: hash,
-        });
+        const newUser = await User.create({ username, email, password: hash });
+        //For MySQL
+        // const newUser = await User.create({
+        //   username,
+        //   email,
+        //   password: hash,
+        // });
         res.statusMessage = "User Registered and account created successfully";
         res.status(200).json(newUser);
       }
@@ -51,11 +52,18 @@ exports.postUserLogin = async (req, res, next) => {
   const email = userdata.email;
   const password = userdata.password;
   try {
+    // For MySql
+    // const user = await User.findOne({
+    //   where: {
+    //     email: email,
+    //   },
+    // });
+
+    //use exec otherwise it will return a query object
     const user = await User.findOne({
-      where: {
-        email: email,
-      },
-    });
+      email: email,
+    }).exec();
+
     bcrypt.compare(password, user.password, (err, result) => {
       // result is boolean
       if (err) throw new Error("Error comparing passwrods in log in");
@@ -65,7 +73,7 @@ exports.postUserLogin = async (req, res, next) => {
       } else {
         res.statusMessage = "User Logged In successfully";
         res.status(200).json({
-          token: this.generateAccessToken(user.id, user.isPremium),
+          token: this.generateAccessToken(user._id, user.isPremium),
         });
       }
     });
@@ -77,23 +85,25 @@ exports.postUserLogin = async (req, res, next) => {
 };
 
 exports.forgotPassword = async (req, res, next) => {
-  const transaction = await database.transaction();
+  // const transaction = await database.transaction();
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const toEmail = req.body.email;
     const user = await User.findOne({
-      where: {
-        email: toEmail,
-      },
-      transaction,
-    });
-
-    const forgotPasswordRequest = await user.createForgotPasswordRequest(
-      {
-        id: uuidv4(),
-        isActive: true,
-      },
-      { transaction }
+      email: toEmail,
+    }).session(session);
+    const forgotPasswordRequest = await ForgotPassword.create(
+      [
+        {
+          isActive: true,
+          userId: user._id,
+        },
+      ],
+      { session }
     );
+    await session.commitTransaction();
+
     const sender = {
       email: "abhayhasrani@gmail.com",
       name: "Abhay",
@@ -104,13 +114,12 @@ exports.forgotPassword = async (req, res, next) => {
         email: toEmail,
       },
     ];
-
     const result = await apiInstance.sendTransacEmail({
       sender,
       to: receivers,
       subject: "Please click the below link to reset your password. Thank You!",
       htmlContent: `<h3>Click Below Link To reset your password</h3>
-      <a href="http://localhost:4000/password/resetPassword/${forgotPasswordRequest.id}">Reset</a>`, //html content overrides text content
+      <a href="http://localhost:4000/password/resetPassword/${forgotPasswordRequest[0]._id}">Reset</a>`, //html content overrides text content
       // textContent: `This is text content and i am {{params.anyVariable}}`,
       // params: {
       //   anyVariable: "anyVariable",
@@ -122,25 +131,29 @@ exports.forgotPassword = async (req, res, next) => {
       message: "Please Check your registered Email for the Link",
     });
 
-    await transaction.commit();
+    // await transaction.commit();
   } catch (err) {
-    await transaction.rollback();
+    // await transaction.rollback();
+    await session.abortTransaction();
     console.log(err);
     res.status(402).json({ message: "Couldn't generate forgot password link" });
+  } finally {
+    session.endSession();
   }
 };
 
 exports.resetPassword = async (req, res, next) => {
   try {
     const forgotPasswordRequestID = req.params.forgotPasswordRequestID;
-    const isRequestValid = await ForgotPassword.findByPk(
+    const isRequestValid = await ForgotPassword.findById(
       forgotPasswordRequestID
     );
-    // console.log(" validatitiy: ", isRequestValid);
     if (isRequestValid && isRequestValid.isActive) {
       //below linedoesnt work due to security reasons so need to use sendFile
       // res.redirect("file:///c%3A/Users/91983/SharpenerBackEnd/Expense%20Tracker%20Full%20Stack/UI/passwordReset.html");
-      res.redirect("http://localhost:3000/resetPassword/"+forgotPasswordRequestID);
+      res.redirect(
+        "http://localhost:3000/resetPassword/" + forgotPasswordRequestID
+      );
       // res.sendFile(
       //   path.join(__dirname, "..", "..", "UI", "passwordReset.html"),
       //   path.join(__dirname, "..", "..", "styles", "auth.css")
@@ -160,24 +173,35 @@ exports.updatePassword = async (req, res, next) => {
     bcrypt.hash(newPassword, saltRounds, async (err, hash) => {
       if (err) throw new Error("Error while generating hash");
       else if (hash) {
-        const forgotPassword = await ForgotPassword.findByPk(
+        const forgotPassword = await ForgotPassword.findById(
           forgotPasswordRequestID
         );
-        const updateForgotPasswordActive = await forgotPassword.update({
-          isActive: "false",
-        });
-        const userWithUpdatedPassword = await User.update(
+        // const updateForgotPasswordActive = await forgotPassword.update({
+        //   isActive: "false",
+        // });
+        const updateForgotPasswordActive =
+          await ForgotPassword.findByIdAndUpdate(
+            forgotPasswordRequestID,
+            {
+              isActive: "false",
+            },
+            { new: true }
+          );
+        const userWithUpdatedPassword = await User.findByIdAndUpdate(
+          forgotPassword.userId,
           { password: hash },
-          { where: { id: forgotPassword.userId } }
+          { new: true }
         );
         console.log(
           "here",
-          forgotPassword,"......... ", 
-          updateForgotPasswordActive,"......... ",
+          forgotPassword,
+          "......... ",
+          updateForgotPasswordActive,
+          "......... ",
           userWithUpdatedPassword
         );
         res.statusMessage = "User password changed successfully";
-        res.status(201).json({message:"User password changed successfully"});
+        res.status(201).json({ message: "User password changed successfully" });
       }
     });
   } catch (err) {
