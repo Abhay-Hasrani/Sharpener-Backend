@@ -24,7 +24,7 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.methods.addToCart = function(productId) {
+userSchema.methods.addToCart = function (productId) {
   if (!this.cart.items) this.cart.items = [];
 
   const index = this.cart.items.findIndex((item) => {
@@ -43,6 +43,15 @@ userSchema.methods.addToCart = function(productId) {
       quantity: 1,
     });
   }
+  this.cart = updatedCart;
+  return this.save();
+};
+
+userSchema.methods.deleteCartItem = function (productId) {
+  const updatedCart = { items: [...this.cart.items] };
+  updatedCart.items = updatedCart.items.filter((item) => {
+    return item.productId.toString() !== productId.toString();
+  });
   this.cart = updatedCart;
   return this.save();
 };
@@ -101,19 +110,6 @@ module.exports = mongoose.model("User", userSchema);
 //         });
 //       })
 //       .catch((err) => console.log(err));
-//   }
-
-//   deleteCartItem(productId) {
-//     const updatedCart = { items: [...this.cart.items] };
-//     updatedCart.items = updatedCart.items.filter((item) => {
-//       return item.productId.toString() !== productId.toString();
-//     });
-//     const db = getDb();
-//     const userCollection = db.collection("users");
-//     return userCollection.updateOne(
-//       { _id: new ObjectId(this._id) },
-//       { $set: { cart: updatedCart } }
-//     );
 //   }
 
 //   createOrder() {
