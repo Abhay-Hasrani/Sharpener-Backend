@@ -26,11 +26,13 @@ const ChatBox = () => {
     socket.on("user joined", (msg) => {
       console.log(msg);
       dispatch(getAllUsers());
+      dispatch(getAllGroups());
     });
-
+    
     socket.on("new-group", (msg) => {
       console.log(msg);
       dispatch(getAllGroups());
+      dispatch(getAllUsers());
     });
   }, [socket, dispatch]);
 
