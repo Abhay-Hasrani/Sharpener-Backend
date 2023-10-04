@@ -19,13 +19,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
-  // User.findUserById("651d1ca609286adc8a89c395")
-  //   .then((user) => {
-  //     req.user = new User(user.name, user.email, user.cart, user._id);
-  //     next();
-  //   })
-  //   .catch((err) => console.log(err));
-  next();
+  User.findById("651d1ca609286adc8a89c395")
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
 });
 
 app.use("/admin", adminRoutes);
@@ -38,6 +37,6 @@ mongoose
     `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.b34ijnd.mongodb.net/shop?retryWrites=true&w=majority`
   )
   .then(() => {
-    // console.log(client);
+    console.log("Connected with Mongo");
     app.listen(3000);
   });
