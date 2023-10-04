@@ -10,7 +10,7 @@ const ExpenseListItem = (props) => {
   const category = expenseObj.category;
 
   function onDeleteClickHandler() {
-    props.onDeleteClickHandler(expenseObj.id);
+    props.onDeleteClickHandler(expenseObj._id);
   }
 
   function onEditClickHandler() {

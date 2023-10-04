@@ -15,11 +15,11 @@ const purchaseRoutes = require("./routes/purchase");
 const premiumRoutes = require("./routes/premium");
 const passwordRoutes = require("./routes/password");
 
-const User = require("./models/user");
-const Expense = require("./models/expense");
-const Order = require("./models/order");
-const ForgotPassword = require("./models/forgotPassword");
-const FilesDownloaded = require("./models/filesDownloaded");
+// const User = require("./models/user");
+// const Expense = require("./models/expense");
+// const Order = require("./models/order");
+// const ForgotPassword = require("./models/forgotPassword");
+// const FilesDownloaded = require("./models/filesDownloaded");
 
 const app = express();
 
@@ -31,12 +31,12 @@ app.use(helmet());
 const logStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
   flags: "a",
 });
-app.use(morgan("combined", { stream: logStream }));
+// app.use(morgan("combined", { stream: logStream }));
 
 app.use("/auth", authRoutes);
-// app.use("/expense", expenseRoutes);
-// app.use("/purchase", purchaseRoutes);
-// app.use("/premium", premiumRoutes);
+app.use("/expense", expenseRoutes);
+app.use("/purchase", purchaseRoutes);
+app.use("/premium", premiumRoutes);
 app.use("/password", passwordRoutes);
 
 // User.hasMany(Expense);

@@ -1,8 +1,7 @@
 const Razorpay = require("razorpay");
-
 const Order = require("../models/order");
 const { generateAccessToken } = require("./auth");
-const database = require("../db/database");
+const mongoose = require("mongoose");
 
 exports.purchasePremium = (req, res, next) => {
   try {
@@ -17,10 +16,15 @@ exports.purchasePremium = (req, res, next) => {
       if (err) {
         throw new Error(err);
       }
-      const orderTableRow = await req.user.createOrder({
+      const orderTableRow = await Order.create({
         orderID: order.id,
         status: "PENDING",
+        userId: req.user,
       });
+      // const orderTableRow = await req.user.createOrder({
+      //   orderID: order.id,
+      //   status: "PENDING",
+      // });
       res.status(201).json({ order, key_id: rzp.key_id });
     });
   } catch (error) {
@@ -30,30 +34,46 @@ exports.purchasePremium = (req, res, next) => {
 };
 
 exports.updateTransactionStatus = async (req, res, next) => {
-  const transaction = await database.transaction();
+  // const transaction = await database.transaction();
+  const session = await mongoose.startSession();
+  session.startTransaction();
   const { orderID, paymentID } = req.body;
   try {
-    const order = await Order.findOne({ where: { orderID }, transaction });
-    const updatedOrder = await order.update(
-      {
+    // const order = await Order.findOne({ where: { orderID }, transaction });
+    const order = await Order.findOne({ orderID }).session(session);
+
+    // const updatedOrder = await order.update(
+    //   {
+    //     paymentID,
+    //     status: "SUCCESSFUL",
+    //   },
+    //   { transaction }
+    // );
+    const updatedOrder = await order
+      .updateOne({
         paymentID,
         status: "SUCCESSFUL",
-      },
-      { transaction }
-    );
-    const updatedUser = await req.user.update(
-      { isPremium: true },
-      { transaction }
-    );
+      })
+      .session(session);
+
+    // const updatedUser = await req.user.update(
+    //   { isPremium: true },
+    //   { transaction }
+    // );
+    req.user.isPremium = true;
+    const updatedUser = await req.user.save({ session });
+
     res.status(202).json({
       sucess: true,
       message: "Transaction Successful",
       token: generateAccessToken(req.user.id, true),
     });
-    await transaction.commit();
+    await session.commitTransaction();
   } catch (error) {
-    await transaction.rollback();
+    await session.abortTransaction();
     console.log(error);
     res.status(402).json(error);
+  } finally {
+    session.endSession();
   }
 };

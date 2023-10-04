@@ -66,7 +66,7 @@ exports.postUserLogin = async (req, res, next) => {
 
     bcrypt.compare(password, user.password, (err, result) => {
       // result is boolean
-      if (err) throw new Error("Error comparing passwrods in log in");
+      if (err) throw new Error("Error comparing passwords in log in");
       if (!result) {
         res.statusMessage = "Wrong Password!!!";
         res.status(400).json(new Error());
