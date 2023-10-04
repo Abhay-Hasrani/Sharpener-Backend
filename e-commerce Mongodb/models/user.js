@@ -1,5 +1,3 @@
-const { use } = require("../routes/admin");
-
 const ObjectId = require("mongodb").ObjectId;
 const getDb = require("../util/database").getDb;
 class User {
@@ -8,6 +6,7 @@ class User {
     this.email = email;
     this._id = id ? new ObjectId(id) : null;
     this.cart = cart; //{items[]}
+    if (!cart || !cart.items) this.cart = { items: [] };
   }
   save() {
     const db = getDb();
@@ -92,6 +91,37 @@ class User {
       { _id: new ObjectId(this._id) },
       { $set: { cart: updatedCart } }
     );
+  }
+
+  createOrder() {
+    const db = getDb();
+    const orderCollection = db.collection("orders");
+    const userCollection = db.collection("users");
+
+    return this.getCart().then((products) => {
+      return orderCollection
+        .insertOne({
+          userId: new ObjectId(this._id),
+          orderItems: products,
+        })
+        .then((result) => {
+          this.cart = { items: [] };
+          return userCollection.updateOne(
+            { _id: new ObjectId(this._id) },
+            { $set: { cart: { items: [] } } }
+          );
+        });
+    });
+  }
+
+  getOrders() {
+    const db = getDb();
+    const orderCollection = db.collection("orders");
+    return orderCollection.find({ userId: this._id }).toArray();
+    // .then((orders) => {
+    //   console.log("yooooooooooooo");
+    //   console.log(orders);
+    // });
   }
 }
 
