@@ -4,7 +4,7 @@ import { Table } from "react-bootstrap";
 import myUrls from "../../utils/myUrls";
 const DownloadList = () => {
   const [downloadsArr, setDownloadsArr] = useState([]);
-
+  console.log(downloadsArr);
   useEffect(() => {
     async function refreshdownloadsList() {
       try {
@@ -25,6 +25,7 @@ const DownloadList = () => {
   const createDownloadLink = (fileUrl, createdAt) => {
     return (
       <a href={fileUrl} download={"Expenses.csv"}>
+        {console.log(createdAt)}
         {new Date(createdAt).toDateString()}
       </a>
     );

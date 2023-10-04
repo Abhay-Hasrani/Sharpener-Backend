@@ -1,7 +1,7 @@
 const Expense = require("../models/expense");
-const database = require("../db/database");
 const s3Services = require("../services/s3Services");
 const mongoose = require("mongoose");
+const FilesDownload = require("../models/filesDownloaded");
 
 exports.getAllExpenses = async (req, res, next) => {
   // const transaction = await database.transaction();
@@ -36,7 +36,7 @@ exports.getAllExpenses = async (req, res, next) => {
       .session(session)
       .exec();
     // console.log(totalExpenses, expenses.length);
-    
+
     res.statusMessage = "Expense Retrieved Successfully";
     res.status(200).json({
       expenses,
@@ -159,33 +159,45 @@ exports.downloadExpense = async (req, res, next) => {
   if (!req.user.isPremium) {
     throw new Error("Not a premium User");
   }
-  const transaction = await database.transaction();
+  // const transaction = await database.transaction();
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
-    const expenses = await req.user.getExpenses(transaction);
+    // const expenses = await req.user.getExpenses(transaction);
+    const expenses = await Expense.find({ userId: req.user });
     // console.log(expenses);
     if (!expenses) throw Error("Failed to get Expenses");
+
     const stringifiedExpenses = JSON.stringify(expenses);
     const filename = `Expense-${req.user.username}-${new Date()}.txt`;
     const fileInfo = await s3Services.uploadToS3(stringifiedExpenses, filename);
-    const filesDownloadedRow = await req.user.createFilesDownloaded(
-      {
-        fileUrl: fileInfo.Location,
-      },
-      { transaction }
+
+    const filesDownloadedRows = await FilesDownload.create(
+      [
+        {
+          fileUrl: fileInfo.Location,
+          userId: req.user,
+        },
+      ],
+      { session }
     );
-    await transaction.commit();
+    const filesDownloadedRow = filesDownloadedRows[0];
+    
+    await session.commitTransaction();
     console.log(filesDownloadedRow);
     res.status(201).json({ fileUrl: fileInfo.Location, success: true });
-  } catch (error) {
-    await transaction.rollback();
+  } catch (err) {
+    await session.abortTransaction();
     console.log("Error while uploading expense to aws", err);
     res.status(401).json(err);
+  } finally {
+    session.endSession();
   }
 };
 
 exports.allDownloadedExpenses = async (req, res, next) => {
   try {
-    const filesDownloaded = await req.user.getFilesDownloadeds();
+    const filesDownloaded = await FilesDownload.find().exec();
     console.log(filesDownloaded);
     res.status(201).json(filesDownloaded);
   } catch (err) {
